@@ -51,7 +51,6 @@ public class UsersAction {
 		String uPhone = ServletActionContext.getRequest().getParameter("uPhone");
 		String uMail = ServletActionContext.getRequest().getParameter("uMail");
 		String uPictuer = ServletActionContext.getRequest().getParameter("uPictuer");
-		int uGrade = Integer.parseInt(ServletActionContext.getRequest().getParameter("uGrade"));
 		String uPower = ServletActionContext.getRequest().getParameter("uPower");
 		BigDecimal uMonery = new BigDecimal(ServletActionContext.getRequest().getParameter("uMonery"));
 		
@@ -64,7 +63,7 @@ public class UsersAction {
 		users.setuPhone(uPhone);
 		users.setuMail(uMail);
 		users.setuPictuer(uPictuer);
-		users.setuGrade(uGrade);
+		users.setuGrade(1);
 		users.setuPower(uPower);
 		users.setuMonery(uMonery);
 		users.setuSign(0);
