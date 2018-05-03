@@ -13,6 +13,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
 import com.lmt.dao.ICollectDao;
+import com.lmt.dao.IGoodsDao;
+import com.lmt.dao.IUsersDao;
 import com.lmt.model.Collect;
 import com.lmt.util.JsonUtil;
 import com.lmt.util.PageBean;
@@ -35,6 +37,27 @@ public class CollectAction {
 		this.collectDao = collectDao;
 	}
 	
+	private IGoodsDao goodsDao;
+
+	public IGoodsDao getGoodsDao() {
+		return goodsDao;
+	}
+
+	@Resource(name = "GoodsDao")
+	public void setGoodsDao(IGoodsDao goodsDao) {
+		this.goodsDao = goodsDao;
+	}
+
+	private IUsersDao usersDao;
+
+	public IUsersDao getUsersDao() {
+		return usersDao;
+	}
+
+	@Resource(name = "UsersDao")
+	public void setUsersDao(IUsersDao usersDao) {
+		this.usersDao = usersDao;
+	}
 
 	/**
 	 * 保存缺勤信息
@@ -43,7 +66,16 @@ public class CollectAction {
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
+		
+		String coGId = ServletActionContext.getRequest().getParameter("coGId");
+		String coUId = ServletActionContext.getRequest().getParameter("coUId");
+		
+		
 		Collect collect = new Collect();
+		
+		collect.setcoGId(goodsDao.getById(coGId));
+		collect.setcoUId(usersDao.getById(coUId));
+		
 		JSONObject jobj = new JSONObject();
 		if(collectDao.save(collect)) {
 			jobj.put("mes", "保存成功!");
@@ -148,7 +180,7 @@ public class CollectAction {
 		List<Object> collectTypelist = collectDao.list();//获取所有类型数据，不带分页
 		PageBean page=null;
 		if(collectTypelist.size()>0){
-			page = new PageBean(collectTypelist.size(),pageNum,5);
+			page = new PageBean(collectTypelist.size(),pageNum,10);
 			list = collectDao.listAll(page);//带分页
 		}
 		JSONObject jobj = new JSONObject();

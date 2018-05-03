@@ -1,6 +1,7 @@
 package com.lmt.action;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,30 @@ public class UsersAction {
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
+		
+		String uName = ServletActionContext.getRequest().getParameter("uName");
+		String uPassword = ServletActionContext.getRequest().getParameter("uPassword");
+		BigDecimal uFraction = new BigDecimal(ServletActionContext.getRequest().getParameter("uFraction"));
+		String uPhone = ServletActionContext.getRequest().getParameter("uPhone");
+		String uMail = ServletActionContext.getRequest().getParameter("uMail");
+		String uPictuer = ServletActionContext.getRequest().getParameter("uPictuer");
+		int uGrade = Integer.parseInt(ServletActionContext.getRequest().getParameter("uGrade"));
+		String uPower = ServletActionContext.getRequest().getParameter("uPower");
+		BigDecimal uMonery = new BigDecimal(ServletActionContext.getRequest().getParameter("uMonery"));
+		
+		
 		Users users = new Users();
+		
+		users.setuName(uName);
+		users.setuPassword(uPassword);
+		users.setuFraction(uFraction);
+		users.setuPhone(uPhone);
+		users.setuMail(uMail);
+		users.setuPictuer(uPictuer);
+		users.setuGrade(uGrade);
+		users.setuPower(uPower);
+		users.setuMonery(uMonery);
+		users.setuSign(0);
 		JSONObject jobj = new JSONObject();
 		if(usersDao.save(users)) {
 			jobj.put("mes", "保存成功!");

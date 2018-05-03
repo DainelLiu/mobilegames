@@ -77,7 +77,7 @@ public class OrderInfoDaoImpl implements IOrderInfoDao {
 	@Override
 	public List<Object> list() {
 		Session session = sessionFactory.openSession();
-		Query query = session.createQuery("from orderInfo");
+		Query query = session.createQuery("from OrderInfo");
 		List<Object> list = query.list();
 		session.close();
 		return list;
@@ -86,7 +86,7 @@ public class OrderInfoDaoImpl implements IOrderInfoDao {
 	@Override
 	public List<Object> listAll(PageBean page) {
 		Session session = sessionFactory.openSession();
-		Query query = session.createQuery("from orderInfo");
+		Query query = session.createQuery("from OrderInfo");
 		query.setFirstResult(page.getRowStart());
 		query.setMaxResults(page.getPageSize());
 		List<Object> list = query.list();

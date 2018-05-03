@@ -12,6 +12,7 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
+import com.lmt.dao.IGamesDao;
 import com.lmt.dao.IZoneDao;
 import com.lmt.model.Zone;
 import com.lmt.util.JsonUtil;
@@ -35,6 +36,16 @@ public class ZoneAction {
 		this.zoneDao = zoneDao;
 	}
 	
+private IGamesDao gamesDao;
+	
+	public IGamesDao getGamesDao() {
+		return gamesDao;
+	}
+	@Resource(name="GamesDao")
+	public void setGamesDao(IGamesDao gamesDao) {
+		this.gamesDao = gamesDao;
+	}
+	
 
 	/**
 	 * 保存缺勤信息
@@ -43,7 +54,12 @@ public class ZoneAction {
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
+		String zDescribe = ServletActionContext.getRequest().getParameter("zDescribe");
+		String zGaId = ServletActionContext.getRequest().getParameter("zGaId");
+		
 		Zone zone = new Zone();
+		zone.setzDescribe(zDescribe);
+		zone.setzGaId(gamesDao.getById(zGaId));
 		JSONObject jobj = new JSONObject();
 		if(zoneDao.save(zone)) {
 			jobj.put("mes", "保存成功!");

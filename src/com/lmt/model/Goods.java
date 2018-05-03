@@ -30,14 +30,14 @@ public class Goods implements Serializable{
 	private String gOTime;
 	private String gDuration;
 	private Zone gZId;
-	private String gUId;
+	private Users gUId;
 	private int gSign;
 	public Goods() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public Goods(String gId, String gName, Style gSId, BigDecimal gPrice, String gDescribe, String gSTime,
-			String gOTime, String gDuration, Zone gZId, String gUId, int gSign) {
+			String gOTime, String gDuration, Zone gZId, Users gUId, int gSign) {
 		super();
 		this.gId = gId;
 		this.gName = gName;
@@ -118,10 +118,10 @@ public class Goods implements Serializable{
 	public void setgZId(Zone gZId) {
 		this.gZId = gZId;
 	}
-	public String getgUId() {
+	public Users getgUId() {
 		return gUId;
 	}
-	public void setgUId(String gUId) {
+	public void setgUId(Users gUId) {
 		this.gUId = gUId;
 	}
 	public int getgSign() {

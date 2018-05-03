@@ -43,7 +43,9 @@ public class StyleAction {
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
+		String sDescribe = ServletActionContext.getRequest().getParameter("sDescribe");
 		Style style = new Style();
+		style.setsDescribe(sDescribe);
 		JSONObject jobj = new JSONObject();
 		if(styleDao.save(style)) {
 			jobj.put("mes", "保存成功!");
@@ -148,7 +150,7 @@ public class StyleAction {
 		List<Object> styleTypelist = styleDao.list();//获取所有类型数据，不带分页
 		PageBean page=null;
 		if(styleTypelist.size()>0){
-			page = new PageBean(styleTypelist.size(),pageNum,5);
+			page = new PageBean(styleTypelist.size(),pageNum,10);
 			list = styleDao.listAll(page);//带分页
 		}
 		JSONObject jobj = new JSONObject();

@@ -43,7 +43,12 @@ public class GamesAction {
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
+		
+		String gaDescribe = ServletActionContext.getRequest().getParameter("gaDescribe");
+		
 		Games games = new Games();
+		
+		games.setgaDescribe(gaDescribe);
 		JSONObject jobj = new JSONObject();
 		if(gamesDao.save(games)) {
 			jobj.put("mes", "保存成功!");
@@ -148,7 +153,7 @@ public class GamesAction {
 		List<Object> gamesTypelist = gamesDao.list();//获取所有类型数据，不带分页
 		PageBean page=null;
 		if(gamesTypelist.size()>0){
-			page = new PageBean(gamesTypelist.size(),pageNum,5);
+			page = new PageBean(gamesTypelist.size(),pageNum,10);
 			list = gamesDao.listAll(page);//带分页
 		}
 		JSONObject jobj = new JSONObject();

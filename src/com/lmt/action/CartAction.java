@@ -1,6 +1,7 @@
 package com.lmt.action;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
 import com.lmt.dao.ICartDao;
+import com.lmt.dao.IGoodsDao;
+import com.lmt.dao.IUsersDao;
 import com.lmt.model.Cart;
 import com.lmt.util.JsonUtil;
 import com.lmt.util.PageBean;
@@ -21,60 +24,95 @@ import net.sf.json.JSONObject;
 
 @Scope("prototype")
 @ParentPackage("struts-default")
-//表示继承的父包
+// 表示继承的父包
 @Namespace(value = "/cart")
 public class CartAction {
-	
+
 	private ICartDao cartDao;
-	
+
 	public ICartDao getCartDao() {
 		return cartDao;
 	}
-	@Resource(name="CartDao")
+
+	@Resource(name = "CartDao")
 	public void setCartDao(ICartDao cartDao) {
 		this.cartDao = cartDao;
 	}
-	
+
+	private IGoodsDao goodsDao;
+
+	public IGoodsDao getGoodsDao() {
+		return goodsDao;
+	}
+
+	@Resource(name = "GoodsDao")
+	public void setGoodsDao(IGoodsDao goodsDao) {
+		this.goodsDao = goodsDao;
+	}
+
+	private IUsersDao usersDao;
+
+	public IUsersDao getUsersDao() {
+		return usersDao;
+	}
+
+	@Resource(name = "UsersDao")
+	public void setUsersDao(IUsersDao usersDao) {
+		this.usersDao = usersDao;
+	}
 
 	/**
 	 * 保存缺勤信息
+	 * 
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	@Action(value="save")
-	public String save() throws IOException{
+	@Action(value = "save")
+	public String save() throws IOException {
+		String cGId = ServletActionContext.getRequest().getParameter("cGId");
+		String cUId = ServletActionContext.getRequest().getParameter("cUId");
+		int cNumber = Integer.parseInt(ServletActionContext.getRequest().getParameter("cNumber"));
+		BigDecimal cSubtotal = new BigDecimal(ServletActionContext.getRequest().getParameter("cSubtotal"));
+
 		Cart cart = new Cart();
+		
+		cart.setcGId(goodsDao.getById(cGId));
+		cart.setcUId(usersDao.getById(cUId));
+		cart.setcNumber(cNumber);
+		cart.setcSubtotal(cSubtotal);
+		
 		JSONObject jobj = new JSONObject();
-		if(cartDao.save(cart)) {
+		if (cartDao.save(cart)) {
 			jobj.put("mes", "保存成功!");
 			jobj.put("status", "success");
-		}else {
+		} else {
 			jobj.put("mes", "获取失败!");
 			jobj.put("status", "error");
 		}
 		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
-		
+
 	}
+
 	/**
 	 * 删除缺勤信息
+	 * 
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	@Action(value="delete")
-	public String delete() throws IOException{
-		
-		
+	@Action(value = "delete")
+	public String delete() throws IOException {
+
 		String cId = ServletActionContext.getRequest().getParameter("cId");
 		Cart cart = cartDao.getById(cId);
 		JSONObject jobj = new JSONObject();
-		if(cartDao.delete(cart)){
-			//save success
+		if (cartDao.delete(cart)) {
+			// save success
 			jobj.put("mes", "删除成功!");
 			jobj.put("status", "success");
-		}else{
-			//save failed
+		} else {
+			// save failed
 			jobj.put("mes", "删除失败!");
 			jobj.put("status", "error");
 		}
@@ -82,24 +120,26 @@ public class CartAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+
 	/**
 	 * 修改缺勤信息
+	 * 
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	@Action(value="update")
-	public String update() throws IOException{
-		
+	@Action(value = "update")
+	public String update() throws IOException {
+
 		String cId = ServletActionContext.getRequest().getParameter("cId");
-		
+
 		Cart cart = cartDao.getById(cId);
 		JSONObject jobj = new JSONObject();
-		
-		if(cartDao.update(cart)) {
+
+		if (cartDao.update(cart)) {
 			jobj.put("mes", "更新成功!");
 			jobj.put("status", "success");
-		}else{
-			//save failed
+		} else {
+			// save failed
 			jobj.put("mes", "更新失败!");
 			jobj.put("status", "error");
 		}
@@ -107,23 +147,24 @@ public class CartAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
-	
+
 	/**
 	 * 根据id信息
+	 * 
 	 * @return
 	 * @throws IOException
 	 */
-	@Action(value="getById")
-	public String getById() throws IOException{
+	@Action(value = "getById")
+	public String getById() throws IOException {
 		String cId = ServletActionContext.getRequest().getParameter("cId");
 		Cart cart = cartDao.getById(cId);
 		JSONObject jobj = new JSONObject();
-		if(cart != null){
-			//save success
+		if (cart != null) {
+			// save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
-		}else{
-			//save failed
+		} else {
+			// save failed
 			jobj.put("mes", "获取失败!");
 			jobj.put("status", "error");
 		}
@@ -131,36 +172,38 @@ public class CartAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+
 	/**
 	 * 获取品牌(类型)列表
+	 * 
 	 * @return
 	 * @throws IOException
 	 */
-	@Action(value="list")
-	public String list() throws IOException{
-		//分页
+	@Action(value = "list")
+	public String list() throws IOException {
+		// 分页
 		String pageNumStr = ServletActionContext.getRequest().getParameter("pageNum");
 		int pageNum = 1;
-		if(pageNumStr!=null && !"".equals(pageNumStr)){
+		if (pageNumStr != null && !"".equals(pageNumStr)) {
 			pageNum = Integer.parseInt(pageNumStr);
 		}
 		List<Object> list = new ArrayList<Object>();
-		List<Object> cartTypelist = cartDao.list();//获取所有类型数据，不带分页
-		PageBean page=null;
-		if(cartTypelist.size()>0){
-			page = new PageBean(cartTypelist.size(),pageNum,5);
-			list = cartDao.listAll(page);//带分页
+		List<Object> cartTypelist = cartDao.list();// 获取所有类型数据，不带分页
+		PageBean page = null;
+		if (cartTypelist.size() > 0) {
+			page = new PageBean(cartTypelist.size(), pageNum, 10);
+			list = cartDao.listAll(page);// 带分页
 		}
 		JSONObject jobj = new JSONObject();
-		if(cartTypelist.size() > 0){
-			//save success
+		if (cartTypelist.size() > 0) {
+			// save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
 			jobj.put("data", JsonUtil.toJsonByListObj(list));
 			jobj.put("pageTotal", page.getPageCount());
 			jobj.put("pageNum", page.getPageNum());
-		}else{
-			//save failed
+		} else {
+			// save failed
 			jobj.put("mes", "获取失败!");
 			jobj.put("status", "error");
 		}
@@ -168,19 +211,19 @@ public class CartAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
-	
-	@Action(value="listAll")
-	public String listAll() throws IOException{
 
-		List<Object> cartTypelist = cartDao.list();//获取所有类型数据，不带分页
+	@Action(value = "listAll")
+	public String listAll() throws IOException {
+
+		List<Object> cartTypelist = cartDao.list();// 获取所有类型数据，不带分页
 		JSONObject jobj = new JSONObject();
-		if(cartTypelist.size() > 0){
-			//save success
+		if (cartTypelist.size() > 0) {
+			// save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
 			jobj.put("data", JsonUtil.toJsonByListObj(cartTypelist));
-		}else{
-			//save failed
+		} else {
+			// save failed
 			jobj.put("mes", "获取失败!");
 			jobj.put("status", "error");
 		}

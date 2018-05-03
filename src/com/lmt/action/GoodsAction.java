@@ -1,6 +1,7 @@
 package com.lmt.action;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,9 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
 import com.lmt.dao.IGoodsDao;
+import com.lmt.dao.IStyleDao;
+import com.lmt.dao.IUsersDao;
+import com.lmt.dao.IZoneDao;
 import com.lmt.model.Goods;
 import com.lmt.util.JsonUtil;
 import com.lmt.util.PageBean;
@@ -35,7 +39,35 @@ public class GoodsAction {
 		this.goodsDao = goodsDao;
 	}
 	
+	private IStyleDao styleDao;
+	
+	public IStyleDao getStyleDao() {
+		return styleDao;
+	}
+	@Resource(name="StyleDao")
+	public void setStyleDao(IStyleDao styleDao) {
+		this.styleDao = styleDao;
+	}
 
+private IUsersDao usersDao;
+	
+	public IUsersDao getUsersDao() {
+		return usersDao;
+	}
+	@Resource(name="UsersDao")
+	public void setUsersDao(IUsersDao usersDao) {
+		this.usersDao = usersDao;
+	}
+private IZoneDao zoneDao;
+	
+	public IZoneDao getZoneDao() {
+		return zoneDao;
+	}
+	@Resource(name="ZoneDao")
+	public void setZoneDao(IZoneDao zoneDao) {
+		this.zoneDao = zoneDao;
+	}
+	
 	/**
 	 * 保存缺勤信息
 	 * @return
@@ -43,7 +75,36 @@ public class GoodsAction {
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
+		
+		String gName = ServletActionContext.getRequest().getParameter("gName");
+		String gSId = ServletActionContext.getRequest().getParameter("gSId");
+		BigDecimal gPrice = new BigDecimal(ServletActionContext.getRequest().getParameter("gPrice"));
+		String gDescribe = ServletActionContext.getRequest().getParameter("gDescribe");
+		String gSTime = ServletActionContext.getRequest().getParameter("gSTime");
+		String gOTime = ServletActionContext.getRequest().getParameter("gOTime");
+		String gDuration = ServletActionContext.getRequest().getParameter("gDuration");
+		String gZId = ServletActionContext.getRequest().getParameter("gZId");
+		String gUId = ServletActionContext.getRequest().getParameter("gUId");
+		int gSign = Integer.parseInt(ServletActionContext.getRequest().getParameter("gSign"));
+		
 		Goods goods = new Goods();
+		
+		goods.setgName(gName);
+		goods.setgSId(styleDao.getById(gSId));
+		goods.setgPrice(gPrice);
+		goods.setgDescribe(gDescribe);
+		if(gSTime != null && !"".equals(gSTime)) {
+			goods.setgSTime(gSTime);
+		}
+		if(gOTime != null && !"".equals(gOTime)) {
+			goods.setgOTime(gOTime);
+		}
+		if(gDuration != null && !"".equals(gDuration)) {
+			goods.setgDuration(gDuration);
+		}
+		goods.setgUId(usersDao.getById(gUId));
+		goods.setgZId(zoneDao.getById(gZId));
+		goods.setgSign(gSign);
 		JSONObject jobj = new JSONObject();
 		if(goodsDao.save(goods)) {
 			jobj.put("mes", "保存成功!");
@@ -148,7 +209,7 @@ public class GoodsAction {
 		List<Object> goodsTypelist = goodsDao.list();//获取所有类型数据，不带分页
 		PageBean page=null;
 		if(goodsTypelist.size()>0){
-			page = new PageBean(goodsTypelist.size(),pageNum,5);
+			page = new PageBean(goodsTypelist.size(),pageNum,10);
 			list = goodsDao.listAll(page);//带分页
 		}
 		JSONObject jobj = new JSONObject();

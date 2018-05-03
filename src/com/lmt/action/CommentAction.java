@@ -13,6 +13,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
 import com.lmt.dao.ICommentDao;
+import com.lmt.dao.IUsersDao;
 import com.lmt.model.Comment;
 import com.lmt.util.JsonUtil;
 import com.lmt.util.PageBean;
@@ -35,6 +36,17 @@ public class CommentAction {
 		this.commentDao = commentDao;
 	}
 	
+	
+	private IUsersDao usersDao;
+
+	public IUsersDao getUsersDao() {
+		return usersDao;
+	}
+
+	@Resource(name = "UsersDao")
+	public void setUsersDao(IUsersDao usersDao) {
+		this.usersDao = usersDao;
+	}
 
 	/**
 	 * 保存缺勤信息
@@ -43,7 +55,18 @@ public class CommentAction {
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
+		
+		
+		String commDescribe = ServletActionContext.getRequest().getParameter("commDescribe");
+		String commUId = ServletActionContext.getRequest().getParameter("commUId");
+		String commToUId = ServletActionContext.getRequest().getParameter("commToUId");
+		
+		
 		Comment comment = new Comment();
+		comment.setcommDescribe(commDescribe);
+		comment.setcommUId(usersDao.getById(commUId));
+		comment.setcommToUId(usersDao.getById(commToUId));
+		
 		JSONObject jobj = new JSONObject();
 		if(commentDao.save(comment)) {
 			jobj.put("mes", "保存成功!");
@@ -148,7 +171,7 @@ public class CommentAction {
 		List<Object> commentTypelist = commentDao.list();//获取所有类型数据，不带分页
 		PageBean page=null;
 		if(commentTypelist.size()>0){
-			page = new PageBean(commentTypelist.size(),pageNum,5);
+			page = new PageBean(commentTypelist.size(),pageNum,10);
 			list = commentDao.listAll(page);//带分页
 		}
 		JSONObject jobj = new JSONObject();

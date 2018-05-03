@@ -1,7 +1,10 @@
 package com.lmt.action;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -12,6 +15,7 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
+import com.lmt.dao.IGoodsDao;
 import com.lmt.dao.IPictureDao;
 import com.lmt.model.Picture;
 import com.lmt.util.JsonUtil;
@@ -35,6 +39,16 @@ public class PictureAction {
 		this.pictureDao = pictureDao;
 	}
 	
+private IGoodsDao goodsDao;
+	
+	public IGoodsDao getGoodsDao() {
+		return goodsDao;
+	}
+	@Resource(name="GoodsDao")
+	public void setGoodsDao(IGoodsDao goodsDao) {
+		this.goodsDao = goodsDao;
+	}
+	
 
 	/**
 	 * 保存缺勤信息
@@ -43,7 +57,12 @@ public class PictureAction {
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
+		String pDescribe = ServletActionContext.getRequest().getParameter("pDescribe");
+		String pGId = ServletActionContext.getRequest().getParameter("pGId");
+		
 		Picture picture = new Picture();
+		picture.setpDescribe(pDescribe);
+		picture.setpGId(goodsDao.getById(pGId));
 		JSONObject jobj = new JSONObject();
 		if(pictureDao.save(picture)) {
 			jobj.put("mes", "保存成功!");
@@ -148,7 +167,7 @@ public class PictureAction {
 		List<Object> pictureTypelist = pictureDao.list();//获取所有类型数据，不带分页
 		PageBean page=null;
 		if(pictureTypelist.size()>0){
-			page = new PageBean(pictureTypelist.size(),pageNum,5);
+			page = new PageBean(pictureTypelist.size(),pageNum,10);
 			list = pictureDao.listAll(page);//带分页
 		}
 		JSONObject jobj = new JSONObject();

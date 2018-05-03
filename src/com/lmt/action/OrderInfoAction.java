@@ -1,7 +1,10 @@
 package com.lmt.action;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -12,7 +15,9 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
+import com.lmt.dao.IGoodsDao;
 import com.lmt.dao.IOrderInfoDao;
+import com.lmt.dao.IUsersDao;
 import com.lmt.model.OrderInfo;
 import com.lmt.util.JsonUtil;
 import com.lmt.util.PageBean;
@@ -35,6 +40,26 @@ public class OrderInfoAction {
 		this.orderInfoDao = orderInfoDao;
 	}
 	
+private IUsersDao usersDao;
+	
+	public IUsersDao getUsersDao() {
+		return usersDao;
+	}
+	@Resource(name="UsersDao")
+	public void setUsersDao(IUsersDao usersDao) {
+		this.usersDao = usersDao;
+	}
+	
+private IGoodsDao goodsDao;
+	
+	public IGoodsDao getGoodsDao() {
+		return goodsDao;
+	}
+	@Resource(name="GoodsDao")
+	public void setGoodsDao(IGoodsDao goodsDao) {
+		this.goodsDao = goodsDao;
+	}
+	
 
 	/**
 	 * 保存缺勤信息
@@ -43,7 +68,23 @@ public class OrderInfoAction {
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
+		
+		String oUId = ServletActionContext.getRequest().getParameter("oUId");
+		String oGId = ServletActionContext.getRequest().getParameter("oGId");
+		BigDecimal oTotal = new BigDecimal(ServletActionContext.getRequest().getParameter("oTotal"));
+		Date day = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		String oComplete = ServletActionContext.getRequest().getParameter("oComplete");
+				
+		
 		OrderInfo orderInfo = new OrderInfo();
+		orderInfo.setoUId(usersDao.getById(oUId));
+		orderInfo.setoGId(goodsDao.getById(oGId));
+		orderInfo.setoDetermine(df.format(day));
+		orderInfo.setoComplete(oComplete);
+		orderInfo.setoSign(0);
+		
 		JSONObject jobj = new JSONObject();
 		if(orderInfoDao.save(orderInfo)) {
 			jobj.put("mes", "保存成功!");
@@ -148,7 +189,7 @@ public class OrderInfoAction {
 		List<Object> orderInfoTypelist = orderInfoDao.list();//获取所有类型数据，不带分页
 		PageBean page=null;
 		if(orderInfoTypelist.size()>0){
-			page = new PageBean(orderInfoTypelist.size(),pageNum,5);
+			page = new PageBean(orderInfoTypelist.size(),pageNum,10);
 			list = orderInfoDao.listAll(page);//带分页
 		}
 		JSONObject jobj = new JSONObject();
