@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -24,8 +23,75 @@
             $(".cancel").click(function () {
                 $(".tip").fadeOut(100);
             });
-
+            getData(1);
         });
+
+        function getData(page){
+            $.ajax({
+                type:"get",
+                async:false,
+                url:"../orderInfo/list.action",
+                dataType:"json",
+                data:{
+                    pageNum: page
+                },
+                success:function(data){
+                    console.log(data);
+                    var html = '';
+                    if(data.status == 'success'){
+                        var rows = data.data;
+                        for(var i=0;i<rows.length;i++){
+                            var item = rows[i];
+                            html += '<tr>';
+                            html += '<td>'+item.oId+'</td>';
+                            html += '<td>'+item.oUId.uName+'</td>';
+                            html += '<td>'+item.oGId.gId+' '+item.aUId.oGId.gName+'</td>';
+                            html += '<td>'+item.oTotal+'</td>';
+                            html += '<td>'+item.oDetermine+'</td>';
+                            html += '<td>'+item.oComplete+'</td>';
+                            if(item.oSign == '1'){
+                                html += '<td>待确认</td>';
+                                html += '<td><a href="#" class="tablelink"> 确认</a></td>';
+                            }else if(item.oSign == '2'){
+                                html += '<td>交易中</td>';
+                                html += '<td><a href="#" class="tablelink"> 取消</a></td>';
+                            }else{
+                                html += '<td>已完成</td>';
+                                html += '<td></td>';
+                            }
+                            html += '</tr>';
+                        }
+                        $('#orderlist').empty().html(html);
+                        totlaPage = data.pageTotal;
+                        nowPage = data.pageNum;
+                        $('#pageNum').text(data.pageNum+'页/共'+data.pageTotal+'页');
+                        var pageHtml = '';
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><span class="pagepre"></span></li>';
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)-1)+');"><span class="pagepre"></span></a></li>';
+                        }
+                        for(var p = 1 ; p <= totlaPage ; p++){
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+p+');">'+p+'</a></li>';
+                        }
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><span class="pagenxt"></span></li>'
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)+1)+');"><span class="pagenxt"></span></a></li>';
+                        }
+                        $('#pageBox').empty().html(pageHtml);
+                        $('#pageDiv').show();
+                    } else {
+                        //没有数据或服务器错误
+                        html += '<td colspan="9">暂无数据</td>';
+                        $('#userlist').empty().html(html);
+                        $('#pageDiv').hide();
+                    }
+
+                }
+            });
+        }
+
     </script>
 
 
@@ -58,49 +124,14 @@
             <th>操作</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <td><input name="" type="checkbox" value=""/></td>
-            <td>20130908</td>
-            <td>张三</td>
-            <td><a href="#" class="tablelink">1001</a></td>
-            <td>200</td>
-            <td>2013-09-09 15:05</td>
-            <td></td>
-            <td>已审核</td>
-            <td><a href="#" class="tablelink"> 删除</a></td>
-        </tr>
-
-        <tr>
-            <td><input name="" type="checkbox" value=""/></td>
-            <td>20130908</td>
-            <td>张三</td>
-            <td><a href="#" class="tablelink">1001</a></td>
-            <td>200</td>
-            <td>2013-09-09 15:05</td>
-            <td></td>
-            <td>已审核</td>
-            <td><a href="#" class="tablelink"> 删除</a></td>
-        </tr>
-        <tr>
-            <td><input name="" type="checkbox" value=""/></td>
-            <td>20130908</td>
-            <td>张三</td>
-            <td><a href="#" class="tablelink">1001</a></td>
-            <td>200</td>
-            <td>2013-09-09 15:05</td>
-            <td></td>
-            <td>已审核</td>
-            <td><a href="#" class="tablelink"> 删除</a></td>
-        </tr>
-        </tbody>
+        <tbody id="orderlist"></tbody>
     </table>
 
 
-    <div class="pagin">
-        <div class="message">共<i class="blue">1256</i>条记录，当前显示第&nbsp;<i class="blue">2&nbsp;</i>页</div>
-        <ul class="paginList">
-            <li class="paginItem"><a href="javascript:;"><span class="pagepre"></span></a></li>
+    <div class="pagin" id="pageDiv" style="display: none;">
+        <div class="message">当前显示第&nbsp;<i class="blue" id="pageNum"></i></div>
+        <ul class="paginList" id="pageBox">
+            <!--<li class="paginItem"><a href="javascript:prePage();"><span class="pagepre"></span></a></li>
             <li class="paginItem"><a href="javascript:;">1</a></li>
             <li class="paginItem current"><a href="javascript:;">2</a></li>
             <li class="paginItem"><a href="javascript:;">3</a></li>
@@ -108,7 +139,7 @@
             <li class="paginItem"><a href="javascript:;">5</a></li>
             <li class="paginItem more"><a href="javascript:;">...</a></li>
             <li class="paginItem"><a href="javascript:;">10</a></li>
-            <li class="paginItem"><a href="javascript:;"><span class="pagenxt"></span></a></li>
+            <li class="paginItem"><a href="javascript:;"><span class="pagenxt"></span></a></li>-->
         </ul>
     </div>
 

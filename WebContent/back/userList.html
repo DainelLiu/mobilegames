@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -16,6 +15,8 @@
         })
     </script>
     <script type="text/javascript">
+        var nowPage = 1;
+        var totlaPage = 1;
         $(document).ready(function () {
             $(".click").click(function () {
                 $(".tip").fadeIn(200);
@@ -32,8 +33,71 @@
             $(".cancel").click(function () {
                 $(".tip").fadeOut(100);
             });
-
+            getData(1);
         });
+
+        function getData(page) {
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "../users/list.action",
+                dataType: "json",
+                data: {
+                    pageNum: page
+                },
+                success: function (data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.status == 'success') {
+                        var rows = data.data;
+                        for (var i = 0; i < rows.length; i++) {
+                            var item = rows[i];
+                            html += '<tr>';
+                            html += '<td class="imgtd"><img src="images/img11.png"/></td>';
+                            html += '<td>' + item.uId + '</td>';
+                            html += '<td>' + item.uName + '</td>';
+                            html += '<td class="password-field">' + item.uPassword + '</td>';
+                            html += '<td>' + item.uPhone + '</td>';
+                            html += '<td>' + item.uMail + '</td>';
+                            html += '<td>' + item.uMonery + '</td>';
+                            if (item.aSign == '0') {
+                                html += '<td>锁定</td>';
+                                html += '<td><a href="#" class="tablelink"> 恢复</a></td>';
+                            } else {
+                                html += '<td>正常</td>';
+                                html += '<td><a href="#" class="tablelink"> 锁定</a></td>';
+                            }
+                            html += '</tr>';
+                        }
+                        $('#userlist').empty().html(html);
+                        totlaPage = data.pageTotal;
+                        nowPage = data.pageNum;
+                        $('#pageNum').text(data.pageNum+'页/共'+data.pageTotal+'页');
+                        var pageHtml = '';
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><span class="pagepre"></span></li>';
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)-1)+');"><span class="pagepre"></span></a></li>';
+                        }
+                        for(var p = 1 ; p <= totlaPage ; p++){
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+p+');">'+p+'</a></li>';
+                        }
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><span class="pagenxt"></span></li>'
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)+1)+');"><span class="pagenxt"></span></a></li>';
+                        }
+                        $('#pageBox').empty().html(pageHtml);
+                        $('#pageDiv').show();
+                    } else {
+                        //没有数据或服务器错误
+                        html += '<td colspan="9">暂无数据</td>';
+                        $('#userlist').empty().html(html);
+                        $('#pageDiv').hide();
+                    }
+                }
+            });
+        }
     </script>
 </head>
 
@@ -60,7 +124,7 @@
             <th>密码</th>
             <th>手机</th>
             <th>邮箱</th>
-            <th>账户余额</th>
+            <th>账户余额/元</th>
             <th>状态</th>
             <th>操作</th>
             <!--<th>点击</th>
@@ -71,71 +135,15 @@
         </tr>
         </thead>
 
-        <tbody>
-
-        <tr>
-            <td class="imgtd"><img src="images/img11.png"/></td>
-            <td>
-                <a href="#">非常不错的国外后台模板，支持HTML5</a>
-                <p>发布时间：2013-10-12 09:25:18</p>
-            </td>
-            <td>后台界面<p>ID: 82122</p></td>
-            <td>开放浏览</td>
-            <td>admin</td>
-            <td>123@163.com</td>
-            <td>128</td>
-            <td>已审核</td>
-        </tr>
-
-        <tr>
-            <td class="imgtd"><img src="images/img11.png"/></td>
-            <td>
-                <a href="#">非常不错的国外后台模板，支持HTML5</a>
-                <p>发布时间：2013-10-12 09:25:18</p>
-            </td>
-            <td>后台界面<p>ID: 82122</p></td>
-            <td>开放浏览</td>
-            <td>admin</td>
-            <td>123@163.com</td>
-            <td>128</td>
-            <td>已审核</td>
-        </tr>
-        <tr>
-            <td class="imgtd"><img src="images/img11.png"/></td>
-            <td>
-                <a href="#">非常不错的国外后台模板，支持HTML5</a>
-                <p>发布时间：2013-10-12 09:25:18</p>
-            </td>
-            <td>后台界面<p>ID: 82122</p></td>
-            <td>开放浏览</td>
-            <td>admin</td>
-            <td>123@163.com</td>
-            <td>128</td>
-            <td>已审核</td>
-        </tr>
-        <tr>
-            <td class="imgtd"><img src="images/img11.png"/></td>
-            <td>
-                <a href="#">非常不错的国外后台模板，支持HTML5</a>
-                <p>发布时间：2013-10-12 09:25:18</p>
-            </td>
-            <td>后台界面<p>ID: 82122</p></td>
-            <td>开放浏览</td>
-            <td>admin</td>
-            <td>123@163.com</td>
-            <td>128</td>
-            <td>已审核</td>
-        </tr>
-
-        </tbody>
+        <tbody id="userlist"></tbody>
 
     </table>
 
 
-    <div class="pagin">
-        <div class="message">共<i class="blue">1256</i>条记录，当前显示第&nbsp;<i class="blue">2&nbsp;</i>页</div>
-        <ul class="paginList">
-            <li class="paginItem"><a href="javascript:;"><span class="pagepre"></span></a></li>
+    <div class="pagin" id="pageDiv" style="display: none;">
+        <div class="message">当前显示第&nbsp;<i class="blue" id="pageNum"></i></div>
+        <ul class="paginList" id="pageBox">
+            <!--<li class="paginItem"><a href="javascript:prePage();"><span class="pagepre"></span></a></li>
             <li class="paginItem"><a href="javascript:;">1</a></li>
             <li class="paginItem current"><a href="javascript:;">2</a></li>
             <li class="paginItem"><a href="javascript:;">3</a></li>
@@ -143,7 +151,7 @@
             <li class="paginItem"><a href="javascript:;">5</a></li>
             <li class="paginItem more"><a href="javascript:;">...</a></li>
             <li class="paginItem"><a href="javascript:;">10</a></li>
-            <li class="paginItem"><a href="javascript:;"><span class="pagenxt"></span></a></li>
+            <li class="paginItem"><a href="javascript:;"><span class="pagenxt"></span></a></li>-->
         </ul>
     </div>
 
