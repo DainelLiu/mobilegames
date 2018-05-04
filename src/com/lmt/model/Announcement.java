@@ -15,7 +15,6 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table
 public class Announcement implements Serializable{
-
 	/**
 	 * 
 	 */

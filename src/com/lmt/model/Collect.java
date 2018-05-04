@@ -14,11 +14,10 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table
 public class Collect implements Serializable{
-
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8364319449645007823L;
+	private static final long serialVersionUID = 682462581967875329L;
 	private String coId;
 	private Goods coGId;
 	private Users coUId;
