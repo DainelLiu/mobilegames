@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -25,6 +24,95 @@
                 }
             });
         });
+
+        function getUserInfo() {
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "../users/getById.action",
+                dataType: "json",
+                data: {
+                    uId: '1'//登录人id
+                },
+                success: function (data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.status == 'success') {
+                        var rows = data.data;
+                        $('#usernameBox').text(rows.uName + '早上好，欢迎使用手游代练平台');
+                        $('#userId').text(rows.uId);
+                        $('#userName').text(rows.uName);
+                        $('#userMoney').text(parseFloat(rows.uMoney));
+                    } else {
+                        //没有数据或服务器错误
+                    }
+
+                }
+            });
+        }
+
+        function getGoodsInfo(page) {
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "../goods/list.action",
+                dataType: "json",
+                data: {
+                    pageNum: page
+                },
+                success: function (data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.status == 'success') {
+                        var rows = data.data;
+                        for(var i=0;i<rows.length;i++){
+                            var item = rows[i];
+                            html += '<tr>';
+                            html += '<td><img src="images/img01.png"/></td>';
+                            html += '<td>'+item.gaDescribe+'</td>';
+                            html += '<td><a href="javascript:getQf(\''+item.gaId+'\')">区服</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:getInfo(\''+item.gaId+'\')">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:delGame(\''+item.gaId+'\')">删除</a></td>';
+                            html += '</tr>';
+                        }
+                        $('#gamelist').empty().html(html);
+                        totlaPage = data.pageTotal;
+                        nowPage = data.pageNum;
+                        $('#pageNum').text(data.pageNum+'页/共'+data.pageTotal+'页');
+                        var pageHtml = '';
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><span class="pagepre"></span></li>';
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)-1)+');"><span class="pagepre"></span></a></li>';
+                        }
+                        for(var p = 1 ; p <= totlaPage ; p++){
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+p+');">'+p+'</a></li>';
+                        }
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><span class="pagenxt"></span></li>'
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)+1)+');"><span class="pagenxt"></span></a></li>';
+                        }
+                        $('#pageBox').empty().html(pageHtml);
+                        $('#pageDiv').show();
+                    } else {
+                        //没有数据或服务器错误
+                    }
+
+                }
+            });
+        }
+
+        function getPubOrderInfo() {
+
+        }
+
+        function chongzhi() {
+
+        }
+
+        function tixian() {
+
+        }
+
     </script>
 </head>
 
@@ -48,15 +136,15 @@
 
             <div class="welinfo">
                 <span><img src="images/sun.png" alt="天气"/></span>
-                <b>Admin早上好，欢迎使用手游代练平台</b>
+                <b id="usernameBox"></b>
             </div>
             <div class="welinfo">
                 <span><img src="images/ico01.png" alt="用户"/></span>
-                <b>用户Id:<b>123456789</b></b>
-                <b>用户名:<b>Admin</b></b>
-                <b>账户余额:<b>100.0</b>元</b>
-                <a href="#">充值</a>
-                <a href="#">提现</a>
+                <b>用户Id:<b id="userId">123456789</b></b>
+                <b>用户名:<b id="userName">Admin</b></b>
+                <b>账户余额:<b id="userMoney">100.0</b>元</b>
+                <a href="javascript:chongzhi()">充值</a>
+                <a href="javascript:tixian()">提现</a>
             </div>
         </div>
         <!--leftinfo end-->
@@ -72,7 +160,7 @@
                         <th>状态</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="goodslist">
                     <tr>
                         <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
                         <td>2013-09-09 15:05</td>

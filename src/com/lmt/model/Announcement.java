@@ -56,7 +56,7 @@ public class Announcement implements Serializable{
 	public void setaDescribe(String aDescribe) {
 		this.aDescribe = aDescribe;
 	}
-	@ManyToOne(cascade={CascadeType.MERGE})
+	@ManyToOne
 	@JoinColumn(name="aUId")
 	public Users getaUId() {
 		return aUId;

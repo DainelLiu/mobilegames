@@ -16,7 +16,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table
-public class OrderInfo implements Serializable{
+public class OrderInfo {
 
 	/**
 	 * 
@@ -50,7 +50,7 @@ public class OrderInfo implements Serializable{
 				+ oDetermine + ", oComplete=" + oComplete + ", oSign=" + oSign + "]";
 	}
 	@Id
-	@GenericGenerator(name="systemUUID",strategy="uuid")  
+	@GenericGenerator(name="systemUUID",strategy="uuid")
 	@GeneratedValue(generator="systemUUID")
 	public String getoId() {
 		return oId;

@@ -18,7 +18,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class Goods implements Serializable{
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 5354819713429297702L;
 	private String gId;
@@ -72,7 +72,7 @@ public class Goods implements Serializable{
 	public void setgName(String gName) {
 		this.gName = gName;
 	}
-	@ManyToOne(cascade={CascadeType.MERGE})
+	@ManyToOne
 	@JoinColumn(name="gSId")
 	public Style getgSId() {
 		return gSId;
@@ -110,7 +110,7 @@ public class Goods implements Serializable{
 	public void setgDuration(String gDuration) {
 		this.gDuration = gDuration;
 	}
-	@ManyToOne(cascade={CascadeType.MERGE})
+	@ManyToOne
 	@JoinColumn(name="gZId")
 	public Zone getgZId() {
 		return gZId;
@@ -118,6 +118,8 @@ public class Goods implements Serializable{
 	public void setgZId(Zone gZId) {
 		this.gZId = gZId;
 	}
+	@ManyToOne
+	@JoinColumn(name="gUId")
 	public Users getgUId() {
 		return gUId;
 	}
