@@ -18,10 +18,6 @@ import org.hibernate.annotations.GenericGenerator;
 @Table
 public class OrderInfo implements Serializable{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8364319449645007823L;
 	private String oId;
 	private Users oUId;
 	private Goods oGId;
@@ -58,7 +54,7 @@ public class OrderInfo implements Serializable{
 	public void setoId(String oId) {
 		this.oId = oId;
 	}
-	@ManyToOne(cascade={CascadeType.MERGE})
+	@ManyToOne
 	@JoinColumn(name="oUId")
 	public Users getoUId() {
 		return oUId;
@@ -66,7 +62,7 @@ public class OrderInfo implements Serializable{
 	public void setoUId(Users oUId) {
 		this.oUId = oUId;
 	}
-	@OneToOne(cascade={CascadeType.MERGE})
+	@OneToOne
 	@JoinColumn(name="oGId")
 	public Goods getoGId() {
 		return oGId;

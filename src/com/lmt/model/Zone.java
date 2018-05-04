@@ -52,7 +52,7 @@ public class Zone implements Serializable{
 	public void setzDescribe(String zDescribe) {
 		this.zDescribe = zDescribe;
 	}
-	@ManyToOne(cascade={CascadeType.MERGE})
+	@ManyToOne
 	@JoinColumn(name="zGaId")
 	public Games getzGaId() {
 		return zGaId;
