@@ -18,6 +18,10 @@ import org.hibernate.annotations.GenericGenerator;
 @Table
 public class OrderInfo implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6251368928469452611L;
 	private String oId;
 	private Users oUId;
 	private Goods oGId;

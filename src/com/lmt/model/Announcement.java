@@ -15,11 +15,10 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table
 public class Announcement implements Serializable{
-
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8364319449645007823L;
+	private static final long serialVersionUID = 8904110862919709396L;
 	private String aId;
 	private String aDescribe;
 	private Users aUId;

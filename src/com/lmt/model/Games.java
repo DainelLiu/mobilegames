@@ -12,11 +12,10 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table
 public class Games implements Serializable{
-
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8364319449645007823L;
+	private static final long serialVersionUID = -574529884716216915L;
 	private String gaId;
 	private String gaDescribe;
 	public Games() {

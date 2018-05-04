@@ -15,11 +15,10 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table
 public class Cart implements Serializable{
-
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8364319449645007823L;
+	private static final long serialVersionUID = 4375695593792796841L;
 	private String cId;
 	private Goods cGId;
 	private Users cUId;

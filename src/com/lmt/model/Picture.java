@@ -16,10 +16,11 @@ import org.hibernate.annotations.GenericGenerator;
 @Table
 public class Picture implements Serializable{
 
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8364319449645007823L;
+	private static final long serialVersionUID = 9066082635064472993L;
 	private String pId;
 	private String pDescribe;
 	private Goods pGId;
