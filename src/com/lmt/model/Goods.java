@@ -20,7 +20,7 @@ public class Goods implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8364319449645007823L;
+	private static final long serialVersionUID = 5354819713429297702L;
 	private String gId;
 	private String gName;
 	private Style gSId;

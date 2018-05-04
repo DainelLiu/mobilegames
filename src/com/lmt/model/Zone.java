@@ -19,7 +19,7 @@ public class Zone implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8364319449645007823L;
+	private static final long serialVersionUID = 7567444578190062500L;
 	private String zId;
 	private String zDescribe;
 	private Games zGaId;

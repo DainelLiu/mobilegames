@@ -16,7 +16,7 @@ public class Style implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8364319449645007823L;
+	private static final long serialVersionUID = -2871968197895068917L;
 	private String sId;
 	private String sDescribe;
 	public Style() {

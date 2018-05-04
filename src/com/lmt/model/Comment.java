@@ -15,11 +15,10 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table
 public class Comment implements Serializable{
-
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8364319449645007823L;
+	private static final long serialVersionUID = 5076386388579772898L;
 	private String commId;
 	private String commDescribe;
 	private Users commUId;
