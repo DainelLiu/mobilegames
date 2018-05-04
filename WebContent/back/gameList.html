@@ -5,6 +5,8 @@
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="js/jquery.js"></script>
     <script language="javascript">
+        var totalPage = 0;
+        var nowPage = 1;
         $(function () {
             //导航切换
             $(".imglist li").click(function () {
@@ -13,14 +15,18 @@
             });
 
             $(".click").click(function () {
-                $(".tip").fadeIn(200);
+                $("#addLog").fadeIn(200);
+            });
+
+            $("#editDiv .tiptop a").click(function () {
+                $("#editDiv").fadeOut(200);
             });
 
             $(".tiptop a").click(function () {
                 $(".tip").fadeOut(200);
             });
 
-            $(".sure").click(function () {
+            $("#addLog .sure").click(function () {
                 $.ajax({
                     type: "post",
                     async: false,
@@ -59,18 +65,39 @@
                 success: function (data) {
                     console.log(data);
                     var html = '';
+                    var gImgs = [
+                        "gameImg/1.png",
+                        "gameImg/2.png",
+                        "gameImg/3.png",
+                        "gameImg/4.png",
+                        "gameImg/5.png",
+                        "gameImg/6.png",
+                        "gameImg/7.png",
+                        "gameImg/8.png",
+                        "gameImg/9.png",
+                        "gameImg/10.png",
+                        "gameImg/11.png",
+                    ]
                     if (data.status == 'success') {
                         var rows = data.data;
                         for (var i = 0; i < rows.length; i++) {
                             var item = rows[i];
                             html += '<li>';
-                            html += '<span><img src="images/img01.png"/></span>';
+                            if(i < gImgs.length){
+                                if(page == 1){
+                                    html += '<span><img src="'+gImgs[i]+'" width="170" height="124"/></span>';
+                                }else{
+                                    html += '<span><img src="images/img01.png" width="170" height="124"/></span>';
+                                }
+                            }else{
+                                html += '<span><img src="images/img01.png" width="170" height="124"/></span>';
+                            }
                             html += '<h2>' + item.gaDescribe + '</h2>';
-                            html += '<p><a href="javascript:getQf(\'' + item.gaId + '\')">区服</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:getInfo(\'' + item.gaId + '\')">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:delGame(\'' + item.gaId + '\')">删除</a></p>';
+                            html += '<p><a href="javascript:getQf(\'' + item.gaId + '\')">区服</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:getInfo(\'' + item.gaId + '\',\'click\')">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:delGame(\'' + item.gaId + '\')">删除</a></p>';
                             html += '</li>';
                         }
                         $('#gamelist').empty().html(html);
-                        totlaPage = data.pageTotal;
+                        totalPage = data.pageTotal;
                         nowPage = data.pageNum;
                         $('#pageNum').text(data.pageNum);
                         $('#pageTotal').text(data.pageTotal);
@@ -80,10 +107,10 @@
                         } else {
                             pageHtml += '<li class="paginItem"><a href="javascript:getData(' + (parseInt(nowPage) - 1) + ');"><span class="pagepre"></span></a></li>';
                         }
-                        for (var p = 1; p <= totlaPage; p++) {
+                        for (var p = 1; p <= totalPage; p++) {
                             pageHtml += '<li class="paginItem"><a href="javascript:getData(' + p + ');">' + p + '</a></li>';
                         }
-                        if (nowPage == 1) {
+                        if (nowPage == totalPage) {
                             pageHtml += '<li class="paginItem"><span class="pagenxt"></span></li>'
                         } else {
                             pageHtml += '<li class="paginItem"><a href="javascript:getData(' + (parseInt(nowPage) + 1) + ');"><span class="pagenxt"></span></a></li>';
@@ -92,7 +119,7 @@
                         $('#pageDiv').show();
                     } else {
                         //没有数据或服务器错误
-                        html += '<li>暂无数据</li>';
+                        html += '<span>暂无数据</span>';
                         $('#gamelist').empty().html(html);
                         $('#pageDiv').hide();
                     }
@@ -101,7 +128,7 @@
             });
         }
 
-        function getQf(gaId) {
+        function getQf(gaId,type) {
             $.ajax({
                 type: "get",
                 async: false,
@@ -113,44 +140,106 @@
                 success: function (data) {
                     console.log(data);
                     var html = '';
+                    var html1 = '<label>拥有区服</label>';
                     if (data.status == 'success') {
                         var rows = data.data;
                         for (var i = 0; i < rows.length; i++) {
                             var item = rows[i];
-                            html += '<li>';
-                            html += '<span><img src="images/img01.png"/></span>';
-                            html += '<h2>' + item.gaDescribe + '</h2>';
-                            html += '<p><a href="javascript:getQf(\'' + item.gaId + '\')">区服</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:getInfo(\'' + item.gaId + '\')">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:delGame(\'' + item.gaId + '\')">删除</a></p>';
-                            html += '</li>';
+                            html += '<span>'+item.zDescribe+'</span>';
+                            html1 += '<span style="border: 1px solid #3eafe0;border-radius: 10px;height: 30px;line-height: 30px;text-align: center;margin-right: 8px;">'+item.zDescribe+'</span>';
+                            if(i == rows.length-1){
+                                html1 += '<span id="tempAdd" style="border: 1px solid #3eafe0;border-radius: 10px;height: 30px;line-height: 40px;text-align: center;margin-right: 8px;" onclick="addQf()"><img src="images/add.png"/></span>';
+                            }
                         }
-                        $('#gamelist').empty().html(html);
-                        totlaPage = data.pageTotal;
-                        nowPage = data.pageNum;
-                        $('#pageNum').text(data.pageNum);
-                        $('#pageTotal').text(data.pageTotal);
-                        var pageHtml = '';
-                        if (nowPage == 1) {
-                            pageHtml += '<li class="paginItem"><span class="pagepre"></span></li>';
-                        } else {
-                            pageHtml += '<li class="paginItem"><a href="javascript:getData(' + (parseInt(nowPage) - 1) + ');"><span class="pagepre"></span></a></li>';
-                        }
-                        for (var p = 1; p <= totlaPage; p++) {
-                            pageHtml += '<li class="paginItem"><a href="javascript:getData(' + p + ');">' + p + '</a></li>';
-                        }
-                        if (nowPage == 1) {
-                            pageHtml += '<li class="paginItem"><span class="pagenxt"></span></li>'
-                        } else {
-                            pageHtml += '<li class="paginItem"><a href="javascript:getData(' + (parseInt(nowPage) + 1) + ');"><span class="pagenxt"></span></a></li>';
-                        }
-                        $('#pageBox').empty().html(pageHtml);
-                        $('#pageDiv').show();
+                        $('#qflist').empty().html(html);
+                        $('#editQflist').empty().prepend(html1);
                     } else {
                         //没有数据或服务器错误
-                        html += '<td colspan="9">暂无数据</td>'
-                        $('#gamelist').empty().html(html);
-                        $('#pageDiv').hide();
+                        html += '<span>暂无数据</span>';
+                        html1 += '<span style="border: 1px solid #3eafe0;border-radius: 10px;height: 30px;line-height: 30px;text-align: center;margin-right: 8px;">暂无区服</span>';
+                        html1 += '<span id="tempAdd" style="border: 1px solid #3eafe0;border-radius: 10px;height: 30px;line-height: 40px;text-align: center;margin-right: 8px;" onclick="addQf()"><img src="images/add.png"/></span>';
+                        $('#qflist').empty().html(html);
+                        $('#editQflist').empty().prepend(html1);
                     }
+                    if(type == 'click'){
+                        $("#qfLog").fadeIn(200);
+                    }
+                }
+            });
+        }
 
+        function getInfo(gaId){
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "../games/getById.action",
+                dataType: "json",
+                data: {
+                    gaId: gaId
+                },
+                success: function (data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.status == 'success') {
+                        var rows = data.data;
+                        $('#gaId').val(rows.gaId);
+                        $('#gameName').val(rows.gaDescribe);
+                        getQf(gaId,'req');
+                    } else {
+                        //没有数据或服务器错误
+                    }
+                    $("#editDiv").fadeIn(200);
+                }
+            });
+        }
+
+        function addQf(){
+            var temp = '<span style="border: 1px solid #3eafe0;border-radius: 10px;height: 30px;line-height: 40px;text-align: center;margin-right: 8px;"><input type="text" id="addText" style="width: 70%;height: 30px;position: relative;top: -6px;border-radius: 10px;"><img src="images/add.png" onclick="saveQF()"/></span>';
+            //var addTemp = '<span id="tempAdd" style="border: 1px solid #3eafe0;border-radius: 10px;height: 30px;line-height: 40px;text-align: center;margin-right: 8px;" onclick="addQf()"><img src="images/add.png"/></span>';
+            $('#tempAdd').remove();
+            $('#editQflist').html($('#editQflist').html()+temp);
+            $('#addText').focus;
+        }
+
+        function saveQF(){
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "../zone/save.action",
+                dataType: "json",
+                data: {
+                    zGaId: $('#gaId').val(),
+                    zDescribe:encodeURI($('#addText').val())
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == 'success') {
+                        getInfo($('#gaId').val());
+                    } else {
+                        //没有数据或服务器错误
+                    }
+                    //$("#ediIntDiv").fade(200);
+                }
+            });
+        }
+        function updateGame(){
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "../games/update.action",
+                dataType: "json",
+                data: {
+                    gaId: $('#gaId').val(),
+                    gaDescribe:encodeURI($('#gameName').val())
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == 'success') {
+                        getData(1);
+                    } else {
+                        //没有数据或服务器错误
+                    }
+                    $("#editDiv").fadeOut(200);
                 }
             });
         }
@@ -198,14 +287,13 @@
     </div>
 
 
-    <div class="tip">
+    <div class="tip" id="addLog">
         <div class="tiptop"><span>游戏添加</span><a></a></div>
 
         <div class="tipinfo">
             <form id="addModal" method="post">
                 <label>游戏名称:</label>
-                <input type="text" name="gaDescribe"
-                       style="width: 55%;border: 1px solid #3eafe0;border-radius: 4px;height: 30px;">
+                <input type="text" name="gaDescribe" style="width: 55%;border: 1px solid #3eafe0;border-radius: 4px;height: 30px;">
             </form>
         </div>
 
@@ -216,11 +304,38 @@
 
     </div>
 
-    <div class="tip">
+    <div class="tip" id="qfLog">
         <div class="tiptop"><span>游戏区服列表</span><a></a></div>
 
-        <div class="tipinfo">
+        <div class="tipinfo" id="qflist">
+            <!--<span>微信一区</span>
+            <span>微信二区</span>
+            <span>微信三区</span>
+            <span>微信一区</span>
+            <span>微信二区</span>
+            <span>微信三区</span>-->
+        </div>
+    </div>
+    <div class="text-input-dialog" id="editDiv" style="display:none;position: absolute;top: 10px;z-index: 999999;background-color: #ffffff;height: 98%;width: 99%;">
+        <div class="tiptop"><span>编辑游戏</span><a></a></div>
 
+        <div class="tipinfo" id="editBox">
+            <div class="formbody">
+                <ul class="forminfo">
+                    <li>
+                        <label>游戏名称</label>
+                        <input type="text" class="dfinput" id="gameName">
+                        <input type="hidden" class="dfinput" id="gaId">
+                    </li>
+                    <li style="margin-bottom: 8px;" id="editQflist">
+                        <!--<label>拥有区服</label>-->
+                        <!--<span style="border: 1px solid #3eafe0;border-radius: 10px;height: 30px;line-height: 30px;text-align: center;margin-right: 8px;">微信二区</span>
+                        <span style="border: 1px solid #3eafe0;border-radius: 10px;height: 30px;line-height: 30px;text-align: center;margin-right: 8px;">微信二区</span>
+                        <span style="border: 1px solid #3eafe0;border-radius: 10px;height: 30px;line-height: 30px;text-align: center;margin-right: 8px;">微信二区</span>-->
+                    </li>
+                    <li><label>&nbsp;</label><input name="" type="button" class="btn" value="确认保存" style="margin-top: 8px;" onclick="updateGame()"></li>
+                </ul>
+            </div>
         </div>
     </div>
 

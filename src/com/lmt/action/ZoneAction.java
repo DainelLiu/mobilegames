@@ -1,6 +1,7 @@
 package com.lmt.action;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ private IGamesDao gamesDao;
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
-		String zDescribe = ServletActionContext.getRequest().getParameter("zDescribe");
+		String zDescribe = URLDecoder.decode(ServletActionContext.getRequest().getParameter("zDescribe"),"utf-8");
 		String zGaId = ServletActionContext.getRequest().getParameter("zGaId");
 		
 		Zone zone = new Zone();
