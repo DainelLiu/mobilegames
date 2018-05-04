@@ -61,7 +61,8 @@
                         $('#gonggaolist').empty().html(html);
                         totlaPage = data.pageTotal;
                         nowPage = data.pageNum;
-                        $('#pageNum').text(data.pageNum+'页/共'+data.pageTotal+'页');
+                        $('#pageNum').text(data.pageNum);
+                        $('#pageTotal').text(data.pageTotal);
                         var pageHtml = '';
                         if(nowPage == 1){
                             pageHtml += '<li class="paginItem"><span class="pagepre"></span></li>';
@@ -122,7 +123,7 @@
 
 
     <div class="pagin" id="pageDiv" style="display: none;">
-        <div class="message">当前显示第&nbsp;<i class="blue" id="pageNum"></i></div>
+        <div class="message">当前显示第&nbsp;<i class="blue" id="pageNum"></i>页/共&nbsp;<i class="blue" id="pageTotal"></i>页</div>
         <ul class="paginList" id="pageBox">
             <!--<li class="paginItem"><a href="javascript:prePage();"><span class="pagepre"></span></a></li>
             <li class="paginItem"><a href="javascript:;">1</a></li>
