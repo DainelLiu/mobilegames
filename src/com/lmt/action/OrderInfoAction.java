@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Scope;
 import com.lmt.dao.IGoodsDao;
 import com.lmt.dao.IOrderInfoDao;
 import com.lmt.dao.IUsersDao;
+import com.lmt.model.Goods;
 import com.lmt.model.OrderInfo;
 import com.lmt.util.JsonUtil;
 import com.lmt.util.PageBean;
@@ -81,15 +82,19 @@ private IGoodsDao goodsDao;
 		OrderInfo orderInfo = new OrderInfo();
 		orderInfo.setoUId(usersDao.getById(oUId));
 		orderInfo.setoGId(goodsDao.getById(oGId));
+		orderInfo.setoTotal(oTotal);
 		orderInfo.setoDetermine(df.format(day));
 		if(oComplete != null && !"".equals(oComplete)) {
 			orderInfo.setoComplete(oComplete);
 		}
 		
-		orderInfo.setoSign(0);
+		orderInfo.setoSign(1);
 		
 		JSONObject jobj = new JSONObject();
 		if(orderInfoDao.save(orderInfo)) {
+			Goods tempG = goodsDao.getById(oGId);
+			tempG.setgSign(2);
+			goodsDao.update(tempG);
 			jobj.put("mes", "保存成功!");
 			jobj.put("status", "success");
 		}else {
@@ -223,6 +228,40 @@ private IGoodsDao goodsDao;
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
 			jobj.put("data", JsonUtil.toJsonByListObj(orderInfoTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	@Action(value="listByUId")
+	public String String() throws IOException{
+		//分页
+		String pageNumStr = ServletActionContext.getRequest().getParameter("pageNum");
+		String uId = ServletActionContext.getRequest().getParameter("oUId");
+		int pageNum = 1;
+		if(pageNumStr!=null && !"".equals(pageNumStr)){
+			pageNum = Integer.parseInt(pageNumStr);
+		}
+		List<Object> list = new ArrayList<Object>();
+		List<Object> orderInfoTypelist = orderInfoDao.list();//获取所有类型数据，不带分页
+		PageBean page=null;
+		if(orderInfoTypelist.size()>0){
+			page = new PageBean(orderInfoTypelist.size(),pageNum,10);
+			list = orderInfoDao.getByConds("from OrderInfo where oUId='"+uId+"'", page);//带分页
+		}
+		JSONObject jobj = new JSONObject();
+		if(list.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(list));
+			jobj.put("pageTotal", page.getPageCount());
+			jobj.put("pageNum", page.getPageNum());
 		}else{
 			//save failed
 			jobj.put("mes", "获取失败!");
