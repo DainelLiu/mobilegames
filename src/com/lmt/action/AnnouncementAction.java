@@ -122,8 +122,10 @@ public class AnnouncementAction {
 	public String update() throws IOException {
 
 		String aId = ServletActionContext.getRequest().getParameter("aId");
+		int aSign = Integer.parseInt(ServletActionContext.getRequest().getParameter("aSign"));
 
 		Announcement announcement = announcementDao.getById(aId);
+		announcement.setaSign(aSign);
 		JSONObject jobj = new JSONObject();
 
 		if (announcementDao.update(announcement)) {
@@ -223,4 +225,72 @@ public class AnnouncementAction {
 		return null;
 	}
 
+	
+	@Action(value = "listByBack")
+	public String listByBack() throws IOException {
+		// 分页
+		String pageNumStr = ServletActionContext.getRequest().getParameter("pageNum");
+		String hql="from Announcement where 1=1 and aSign IN (0,1,2)";
+		int pageNum = 1;
+		if (pageNumStr != null && !"".equals(pageNumStr)) {
+			pageNum = Integer.parseInt(pageNumStr);
+		}
+		List<Object> list = new ArrayList<Object>();
+		List<Object> announcementTypelist = announcementDao.list();// 获取所有类型数据，不带分页
+		PageBean page = null;
+		if (announcementTypelist.size() > 0) {
+			page = new PageBean(announcementTypelist.size(), pageNum, 10);
+			list = announcementDao.getByConds(hql,page);// 带分页
+		}
+		JSONObject jobj = new JSONObject();
+		if (announcementTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(list));
+			jobj.put("pageTotal", page.getPageCount());
+			jobj.put("pageNum", page.getPageNum());
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	@Action(value = "listByView")
+	public String listByView() throws IOException {
+		// 分页
+		String pageNumStr = ServletActionContext.getRequest().getParameter("pageNum");
+		String hql="from Announcement where 1=1 and aSign = 1";
+		int pageNum = 1;
+		if (pageNumStr != null && !"".equals(pageNumStr)) {
+			pageNum = Integer.parseInt(pageNumStr);
+		}
+		List<Object> list = new ArrayList<Object>();
+		List<Object> announcementTypelist = announcementDao.list();// 获取所有类型数据，不带分页
+		PageBean page = null;
+		if (announcementTypelist.size() > 0) {
+			page = new PageBean(announcementTypelist.size(), pageNum, 10);
+			list = announcementDao.getByConds(hql,page);// 带分页
+		}
+		JSONObject jobj = new JSONObject();
+		if (announcementTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(list));
+			jobj.put("pageTotal", page.getPageCount());
+			jobj.put("pageNum", page.getPageNum());
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
 }

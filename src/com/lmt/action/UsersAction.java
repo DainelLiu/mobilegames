@@ -116,7 +116,7 @@ public class UsersAction {
 		
 		String uId = ServletActionContext.getRequest().getParameter("uId");
 		BigDecimal uMonery = new BigDecimal(ServletActionContext.getRequest().getParameter("uMonery"));
-		
+		int uSign = Integer.parseInt(ServletActionContext.getRequest().getParameter("uSign"));
 		Users users = usersDao.getById(uId);
 		users.setuMonery(uMonery);
 		JSONObject jobj = new JSONObject();
@@ -229,6 +229,49 @@ public class UsersAction {
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
 			jobj.put("loginUser", usersTypelist.get(0));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	@Action(value="updateToSign")
+	public String updateToSign() throws IOException{
+		
+		String uId = ServletActionContext.getRequest().getParameter("uId");
+		int uSign = Integer.parseInt(ServletActionContext.getRequest().getParameter("uSign"));
+		Users users = usersDao.getById(uId);
+		users.setuSign(uSign);
+		JSONObject jobj = new JSONObject();
+		
+		if(usersDao.update(users)) {
+			jobj.put("mes", "更新成功!");
+			jobj.put("status", "success");
+			jobj.put("loginUser", users);
+		}else{
+			//save failed
+			jobj.put("mes", "更新失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	@Action(value="getByUPower")
+	public String getByUPower() throws IOException{
+		String hql="from Users where 1=1 and uPower='0'"; 
+		List usersList = usersDao.getAllByConds(hql);
+		Users users= (Users) usersList.get(0);
+		JSONObject jobj = new JSONObject();
+		if(users != null){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data",users);
 		}else{
 			//save failed
 			jobj.put("mes", "获取失败!");

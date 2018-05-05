@@ -32,7 +32,7 @@
             $.ajax({
                 type:"get",
                 async:false,
-                url:"../announcement/list.action",
+                url:"../announcement/listByBack.action",
                 dataType:"json",
                 data:{
                     pageNum: page
@@ -51,10 +51,16 @@
                             html += '<td>'+item.aTime+'</td>';
                             if(item.aSign == '0'){
                                 html += '<td>待审核</td>';
-                                html += '<td><a href="#" class="tablelink"> 通过</a></td>';
-                            }else{
+                                html += '<td><a href="javascript:updateGG(\''+item.aId+'\',1)" class="tablelink"> 通过</a><a href="javascript:updateGG(\''+item.aId+'\',2)" class="tablelink"> 不通过</a></td>';
+                            }else if(item.aSign == '1'){
                                 html += '<td>已审核</td>';
-                                html += '<td><a href="#" class="tablelink"> 删除</a></td>';
+                                html += '<td><a href="javascript:updateGG(\''+item.aId+'\',3)" class="tablelink"> 删除</a></td>';
+                            }else if(item.aSign == '2'){
+                            	html += '<td>未通过</td>';
+                                html += '<td><a href="javascript:updateGG(\''+item.aId+'\',3)" class="tablelink"> 删除</a></td>';
+                            }else{
+                            	html += '<td>无效数据</td>';
+                            	html += '<td><a href="javascript:updateGG(\''+item.aId+'\',3)" class="tablelink"> 删除</a></td>';
                             }
                             html += '</tr>';
                         }
@@ -88,6 +94,27 @@
 
                 }
             });
+        }
+        
+        function updateGG(id,state){
+        	 $.ajax({
+                 type: "post",
+                 async: false,
+                 url: "../announcement	/update.action",
+                 dataType: "json",
+                 data: {
+                	 aId:id,
+                	 aSign:state
+                 },
+                 success: function (data) {
+                     console.log(data);
+                     if(data.status == 'success'){
+                         getData(1);//刷新页面数据，获取第1页数
+                     }else{
+                         alert(data.mes);
+                     }
+                 }
+             });
         }
     </script>
 

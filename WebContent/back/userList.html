@@ -62,10 +62,10 @@
                             html += '<td>' + item.uMonery + '</td>';
                             if (item.uSign == '0') {
                                 html += '<td>锁定</td>';
-                                html += '<td><a href="#" class="tablelink"> 恢复</a></td>';
+                                html += '<td><a href="javascript:updateGG(\''+item.uId+'\',1)" class="tablelink" > 恢复</a></td>';
                             } else {
                                 html += '<td>正常</td>';
-                                html += '<td><a href="#" class="tablelink"> 锁定</a></td>';
+                                html += '<td><a href="javascript:updateGG(\''+item.uId+'\',0)" class="tablelink"> 锁定</a></td>';
                             }
                             html += '</tr>';
                         }
@@ -99,6 +99,26 @@
                 }
             });
         }
+        function updateGG(id,state){
+       	 $.ajax({
+                type: "post",
+                async: false,
+                url: "../users/updateToSign.action",
+                dataType: "json",
+                data: {
+               	 uId:id,
+               	 uSign:state
+                },
+                success: function (data) {
+                    console.log(data);
+                    if(data.status == 'success'){
+                        getData(1);//刷新页面数据，获取第1页数
+                    }else{
+                        alert(data.mes);
+                    }
+                }
+            });
+       }
     </script>
 </head>
 
