@@ -4,6 +4,58 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>无标题文档</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script language="javascript">
+	$(function() {
+		//导航切换
+		$(".imglist li").click(function() {
+			$(".imglist li.selected").removeClass("selected")
+			$(this).addClass("selected");
+		});
+		
+	})
+</script>
+ <script type="text/javascript">
+        var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
+        $(document).ready(function () {
+            $(".click").click(function () {
+                $(".tip").fadeIn(200);
+            });
+
+            $(".tiptop a").click(function () {
+                $(".tip").fadeOut(200);
+            });
+
+            $(".sure").click(function () {
+                $(".tip").fadeOut(100);
+            });
+
+            $(".cancel").click(function () {
+                $(".tip").fadeOut(100);
+            });
+            getData(1);
+        });
+
+        function getData(page) {
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "../users/getById.action",
+                dataType: "json",
+                data: {
+                	uId: loginUser
+                },
+                success: function (data) {
+                	console.log(data);
+                    if (data.status == 'success') {
+                    	$('#zhye').text(data.data.uMonery);
+                    } else {
+                        //没有数据或服务器错误
+                    }
+            });
+        }
+    </script>
 </head>
 
 <body>
