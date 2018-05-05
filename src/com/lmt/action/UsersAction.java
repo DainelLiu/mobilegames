@@ -115,10 +115,24 @@ public class UsersAction {
 	public String update() throws IOException{
 		
 		String uId = ServletActionContext.getRequest().getParameter("uId");
+		String uPassword = ServletActionContext.getRequest().getParameter("uPassword");
+		String uPhone = ServletActionContext.getRequest().getParameter("uPhone");
+		String uMail = ServletActionContext.getRequest().getParameter("uMail");
 		BigDecimal uMonery = new BigDecimal(ServletActionContext.getRequest().getParameter("uMonery"));
 		int uSign = Integer.parseInt(ServletActionContext.getRequest().getParameter("uSign"));
 		Users users = usersDao.getById(uId);
-		users.setuMonery(uMonery);
+		if(uMonery != null){
+			users.setuMonery(uMonery);
+		}
+		if(uPassword != null){
+			users.setuPassword(uPassword);
+		}
+		if(uPhone != null){
+			users.setuPhone(uPhone);
+		}
+		if(uMail != null){
+			users.setuMail(uMail);
+		}
 		JSONObject jobj = new JSONObject();
 		
 		if(usersDao.update(users)) {

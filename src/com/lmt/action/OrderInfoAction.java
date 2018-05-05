@@ -146,9 +146,13 @@ private IGoodsDao goodsDao;
 		OrderInfo orderInfo = orderInfoDao.getById(oId);
 		JSONObject jobj = new JSONObject();
 		if(oSign == 3) {
+			orderInfo.setoSign(oSign);
 			orderInfo.setoDetermine(df.format(day));
 		}
 		if(orderInfoDao.update(orderInfo)) {
+			Goods temp = orderInfo.getoGId();
+			temp.setgSign(4);
+			goodsDao.update(temp);
 			jobj.put("mes", "更新成功!");
 			jobj.put("status", "success");
 		}else{

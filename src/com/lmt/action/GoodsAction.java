@@ -14,10 +14,12 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
 import com.lmt.dao.IGoodsDao;
+import com.lmt.dao.IOrderInfoDao;
 import com.lmt.dao.IStyleDao;
 import com.lmt.dao.IUsersDao;
 import com.lmt.dao.IZoneDao;
 import com.lmt.model.Goods;
+import com.lmt.model.OrderInfo;
 import com.lmt.util.JsonUtil;
 import com.lmt.util.PageBean;
 
@@ -67,7 +69,15 @@ private IZoneDao zoneDao;
 	public void setZoneDao(IZoneDao zoneDao) {
 		this.zoneDao = zoneDao;
 	}
+	private IOrderInfoDao orderInfoDao;
 	
+	public IOrderInfoDao getOrderInfoDao() {
+		return orderInfoDao;
+	}
+	@Resource(name="OrderInfoDao")
+	public void setOrderInfoDao(IOrderInfoDao orderInfoDao) {
+		this.orderInfoDao = orderInfoDao;
+	}
 	/**
 	 * 保存缺勤信息
 	 * @return
@@ -155,6 +165,11 @@ private IZoneDao zoneDao;
 		String gSign = ServletActionContext.getRequest().getParameter("gSign");
 		Goods goods = goodsDao.getById(gId);
 		goods.setgSign(Integer.parseInt(gSign));
+		if("3".equals(gSign)){
+			OrderInfo orderInfo = (OrderInfo) orderInfoDao.getAllByConds("from OrderInfo where oGId='"+gId+"'").get(0);
+			orderInfo.setoSign(2);
+			orderInfoDao.update(orderInfo);
+		}
 		JSONObject jobj = new JSONObject();
 		
 		if(goodsDao.update(goods)) {
@@ -298,7 +313,7 @@ private IZoneDao zoneDao;
 		PageBean page=null;
 		if(goodsTypelist.size()>0){
 			page = new PageBean(goodsTypelist.size(),pageNum,10);
-			list = goodsDao.getByConds("from Goods where gSign !='4'", page);//带分页
+			list = goodsDao.getByConds("from Goods where gSign !='5'", page);//带分页
 		}
 		JSONObject jobj = new JSONObject();
 		if(list.size() > 0){

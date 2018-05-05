@@ -57,16 +57,23 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
                     for(var i=0;i<rows.length;i++){
                         var item = rows[i];
                         html += '<tr>';
-                        html += '<td>'+item.gSId.sDescribe+'</td>';
-                        html += '<td>'+item.gZId.zGaId.gaDescribe+' '+item.gZId.zDescribe+'</td>';
-                        html += '<td>'+item.gName+'<p>内容:'+item.gDescribe+'</p></td>';
-                        html += '<td>'+item.gSTime+'</td>';
-                        html += '<td>'+item.gOTime+'</td>';
-                        html += '<td>'+item.gDuration+'</td>';
-                        html += '<td id="p'+item.gId+'">'+item.gPrice+'</td>';
-                        if(item.gSign == '1'){
-                        	html += '<td><a href="javascript:addOrder(\''+item.gId+'\')" class="tablelink"> 接单</a></td>';
+                        html += '<td>'+item.oGId.gSId.sDescribe+'</td>';
+                        html += '<td>'+item.oGId.gZId.zGaId.gaDescribe+' '+item.oGId.gZId.zDescribe+'</td>';
+                        html += '<td>'+item.oGId.gName+'<p>内容:'+item.gDescribe+'</p></td>';
+                        html += '<td>'+item.oGId.gSTime+'</td>';
+                        html += '<td>'+item.oGId.gOTime+'</td>';
+                        html += '<td>'+item.oDetermine+'</td>';
+                        html += '<td>'+item.oComplete+'</td>';
+                        html += '<td>'+item.oGId.gDuration+'</td>';
+                        html += '<td>'+item.oTotal+'</td>';
+                        if(item.oSign == '1'){
+                        	html += '<td>待确认</td>';
+                        	html += '<td></td>';
+                        }else if(item.oSign == '2'){
+                        	html += '<td>进行中</td>';
+                        	html += '<td><a href="javascript:updateOrder(\''+item.oId+'\')" class="tablelink"> 完成</a></td>';
                         }else{
+                        	html += '<td>已完成</td>';
                         	html += '<td></td>';
                         }
                         
@@ -102,6 +109,28 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
             }
         });
     }
+	
+	function updateOrder(oid){
+		$.ajax({
+            type: "post",
+            async: false,
+            url: "./orderInfo/update.action",
+            dataType: "json",
+            data: {
+            	oId:oid,
+            	oSign:'3'
+            },
+            success: function (data) {
+                console.log(data);
+                if (data.status == 'success') {
+                	getOrderInfo(1);
+                } else {
+                    //没有数据或服务器错误
+                }
+
+            }
+        });
+	}
 </script>
 </head>
 
@@ -127,8 +156,11 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
 					<th>标题</th>
 					<th>开始时间</th>
 					<th>结束时间</th>
+					<th>下单时间</th>
+					<th>完成时间</th>
 					<th>时长</th>
 					<th>价格</th>
+					<th>状态</th>
 					<th>操作</th>
 				</tr>
 			</thead>

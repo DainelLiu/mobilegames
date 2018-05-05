@@ -34,25 +34,72 @@
             $(".cancel").click(function () {
                 $(".tip").fadeOut(100);
             });
-            getData(1);
+            getUserInfo();
         });
 
-        function getData(page) {
+        function getUserInfo() {
             $.ajax({
                 type: "get",
                 async: false,
-                url: "../users/getById.action",
+                url: "./users/getById.action",
                 dataType: "json",
                 data: {
-                	uId: loginUser
+                    uId: loginUser.uId//登录人id
                 },
                 success: function (data) {
-                	console.log(data);
+                    console.log(data);
                     if (data.status == 'success') {
-                    	$('#zhye').text(data.data.uMonery);
+                        var rows = data.data;
+                        $('#uname').val(rows.uName);
+                        $('#upwd').val(rows.uPassword);
+                        $('#upwd1').val(rows.uPassword);
+                        $('#uphone').val(rows.uPhone);
+                        $('#uemail').val(rows.uMail);
+                        $('#ufrac').val(rows.uFraction);
+                        $('#umoney').val(rows.uMonery);
+                        $('#pwd').show();//.val(rows.uPassword);
+                        $('#pwd1').hide();
+                        $('#uphone').attr('readonly','readonly');
+                        $('#uemail').attr('readonly','readonly');
+                        $('#savebtn').hide();
                     } else {
                         //没有数据或服务器错误
                     }
+
+                }
+            });
+        }
+        function getEdit(){
+            $('#pwd').hide();//.val(rows.uPassword);
+            $('#pwd1').show();
+            $('#uphone').removeAttr('readonly');
+            $('#uemail').removeAttr('readonly');
+            $('#savebtn').show();
+        }
+        function updateUser(){
+        	$.ajax({
+                type: "post",
+                async: false,
+                url: "./users/update.action",
+                dataType: "json",
+                data: {
+                	uId:loginUser.uId,
+                    uPassword:$('#upwd').val(),
+                    uPhone:$('#uphone').val(),
+                    uMail:$('#uemail').val(),
+                    uSign:loginUser.uSign,
+                    uMonery:loginUser.uMonery
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == 'success') {
+                        Util.setLocalStorage("loginUser",JSON.stringify(data.loginUser));
+                    	getUserInfo();
+                    } else {
+                        //没有数据或服务器错误
+                    }
+
+                }
             });
         }
     </script>
@@ -73,12 +120,15 @@
     <div class="formtitle"><span>基本信息</span></div>
     
     <ul class="forminfo">
-    <li><label>文章标题</label><input name="" type="text" class="dfinput" /><i>标题不能超过30个字符</i></li>
-    <li><label>关键字</label><input name="" type="text" class="dfinput" /><i>多个关键字用,隔开</i></li>
-    <li><label>是否审核</label><cite><input name="" type="radio" value="" checked="checked" />是&nbsp;&nbsp;&nbsp;&nbsp;<input name="" type="radio" value="" />否</cite></li>
-    <li><label>引用地址</label><input name="" type="text" class="dfinput" value="http://www..com/html/uidesign/" /></li>
-    <li><label>文章内容</label><textarea name="" cols="" rows="" class="textinput"></textarea></li>
-    <li><label>&nbsp;</label><input name="" type="button" class="btn" value="确认保存"/></li>
+    <li><label>用户名</label><input name="" type="text" class="dfinput" id="uname" readonly /></li>
+    <li id="pwd"><label>密码</label><input name="" type="password" class="dfinput" id="upwd" readonly /></li>
+    <li id="pwd1" style="display:none;"><label>密码</label><input name="" type="text" class="dfinput" id="upwd1" /></li>
+    <li><label>手机</label><input name="" type="text" class="dfinput" id="uphone" readonly /></li>
+    <li><label>邮箱</label><input name="" type="text" class="dfinput" id="uemail" readonly /></li>
+    <li><label>信用度</label><input name="" type="text" class="dfinput" id="ufrac" readonly /></li>
+    <li><label>账户余额</label><input name="" type="text" class="dfinput" id="umoney" readonly /></li>
+    <li><label>&nbsp;</label><input name="" type="button" class="btn" value="修改" onclick="getEdit()"/></li>
+    <li id="savebtn" style="display:none;"><label>&nbsp;</label><input name="" type="button" class="btn" value="保存" onclick="updateUser()"/></li>
     </ul>
     
     

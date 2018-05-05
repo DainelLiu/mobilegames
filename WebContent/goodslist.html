@@ -70,11 +70,14 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
                         html += '<td>'+item.gPrice+'</td>';
                         if(item.gSign == '1'){
                         	html += '<td>发布中</td>';
-                        	html += '<td><a href="javascript:setState(\''+item.gId+'\')" class="tablelink"> 下架</a></td>';
+                        	html += '<td><a href="javascript:setState(\''+item.gId+'\',5)" class="tablelink"> 下架</a></td>';
                         }else if(item.gSign == '2'){
+                        	html += '<td>待确认</td>';
+                        	html += '<td><a href="javascript:setState(\''+item.gId+'\',3)" class="tablelink"> 确认</a></td>';
+                        }else if(item.gSign == '3'){
                         	html += '<td>进行中</td>';
                         	html += '<td></td>';
-                        }else if(item.gSign == '3'){
+                        }else if(item.gSign == '4'){
                         	html += '<td>已完成</td>';
                         	html += '<td></td>';
                         }else{
@@ -113,7 +116,7 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
             }
         });
     }
-	function setState(id){
+	function setState(id,state){
 		$.ajax({
             type: "post",
             async: false,
@@ -121,7 +124,7 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
             dataType: "json",
             data: {
             	gId:id,
-            	gSign:'4'
+            	gSign:state
             },
             success: function (data) {
                 console.log(data);
