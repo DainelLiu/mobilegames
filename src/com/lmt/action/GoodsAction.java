@@ -152,8 +152,9 @@ private IZoneDao zoneDao;
 	public String update() throws IOException{
 		
 		String gId = ServletActionContext.getRequest().getParameter("gId");
-		
+		String gSign = ServletActionContext.getRequest().getParameter("gSign");
 		Goods goods = goodsDao.getById(gId);
+		goods.setgSign(Integer.parseInt(gSign));
 		JSONObject jobj = new JSONObject();
 		
 		if(goodsDao.update(goods)) {
@@ -213,7 +214,7 @@ private IZoneDao zoneDao;
 			list = goodsDao.listAll(page);//带分页
 		}
 		JSONObject jobj = new JSONObject();
-		if(goodsTypelist.size() > 0){
+		if(list.size() > 0){
 			//save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
@@ -240,6 +241,40 @@ private IZoneDao zoneDao;
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
 			jobj.put("data", JsonUtil.toJsonByListObj(goodsTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	@Action(value="listByUId")
+	public String listByUId() throws IOException{
+		//分页
+		String pageNumStr = ServletActionContext.getRequest().getParameter("pageNum");
+		String uId = ServletActionContext.getRequest().getParameter("gUId");
+		int pageNum = 1;
+		if(pageNumStr!=null && !"".equals(pageNumStr)){
+			pageNum = Integer.parseInt(pageNumStr);
+		}
+		List<Object> list = new ArrayList<Object>();
+		List<Object> goodsTypelist = goodsDao.list();//获取所有类型数据，不带分页
+		PageBean page=null;
+		if(goodsTypelist.size()>0){
+			page = new PageBean(goodsTypelist.size(),pageNum,10);
+			list = goodsDao.getByConds("from Goods where gUId='"+uId+"'", page);//带分页
+		}
+		JSONObject jobj = new JSONObject();
+		if(list.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(list));
+			jobj.put("pageTotal", page.getPageCount());
+			jobj.put("pageNum", page.getPageNum());
 		}else{
 			//save failed
 			jobj.put("mes", "获取失败!");
