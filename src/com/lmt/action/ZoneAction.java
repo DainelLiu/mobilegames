@@ -205,5 +205,26 @@ private IGamesDao gamesDao;
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+	@Action(value="listAllByGaId")
+	public String listAllByGaId() throws IOException{
+
+		String gaId = ServletActionContext.getRequest().getParameter("zGaId");
+		List<Object> zoneTypelist = zoneDao.getAllByConds("from Zone where zGaId='" + gaId + "'");//获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if(zoneTypelist.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+
+			jobj.put("data", JsonUtil.toJsonByListObj(zoneTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
 
 }

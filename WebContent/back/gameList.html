@@ -93,7 +93,7 @@
                                 html += '<span><img src="images/img01.png" width="170" height="124"/></span>';
                             }
                             html += '<h2>' + item.gaDescribe + '</h2>';
-                            html += '<p><a href="javascript:getQf(\'' + item.gaId + '\')">区服</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:getInfo(\'' + item.gaId + '\',\'click\')">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:delGame(\'' + item.gaId + '\')">删除</a></p>';
+                            html += '<p><a href="javascript:getQf(\'' + item.gaId + '\',\'click\')">区服</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:getInfo(\'' + item.gaId + '\')">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:delGame(\'' + item.gaId + '\')">删除</a></p>';
                             html += '</li>';
                         }
                         $('#gamelist').empty().html(html);
@@ -132,7 +132,7 @@
             $.ajax({
                 type: "get",
                 async: false,
-                url: "../zone/list.action",
+                url: "../zone/listAllByGaId.action",
                 dataType: "json",
                 data: {
                     zGaId: gaId

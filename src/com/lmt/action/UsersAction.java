@@ -62,7 +62,7 @@ public class UsersAction {
 		users.setuFraction(uFraction);
 		users.setuPhone(uPhone);
 		users.setuMail(uMail);
-		users.setuPictuer(uPictuer);
+		users.setuPictuer("images/img01.png");
 		users.setuGrade(1);
 		users.setuPower(uPower);
 		users.setuMonery(uMonery);
