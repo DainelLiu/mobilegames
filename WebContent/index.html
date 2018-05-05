@@ -5,6 +5,7 @@
     <title>无标题文档</title>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
     <script type="text/javascript" src="js/jsapi.js"></script>
     <script type="text/javascript" src="js/format+zh_CN,default,corechart.I.js"></script>
     <script type="text/javascript" src="js/jquery.gvChart-1.0.1.min.js"></script>
@@ -12,27 +13,42 @@
 
     <script type="text/javascript">
         gvChartInit();
-        jQuery(document).ready(function () {
-
-            jQuery('#myTable5').gvChart({
-                chartType: 'PieChart',
-                gvSettings: {
-                    vAxis: {title: 'No of players'},
-                    hAxis: {title: 'Month'},
-                    width: 650,
-                    height: 250
-                }
+        var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
+        $(function () {
+        	$(".click").click(function () {
+                $(".tip").fadeIn(200);
             });
+
+            $("#chongzhi .tiptop a").click(function () {
+                $(".tip").fadeOut(200);
+            });
+            
+            $("#tixian .tiptop a").click(function () {
+                $(".tip").fadeOut(200);
+            });
+
+            $(".sure").click(function () {
+                $(".tip").fadeOut(100);
+            });
+
+            $(".cancel").click(function () {
+                $(".tip").fadeOut(100);
+            });
+            getUserInfo();
+            getGoodsInfo(1);
+            getPubOrderInfo(1);
+            gonggao();
+            
         });
 
         function getUserInfo() {
             $.ajax({
                 type: "get",
                 async: false,
-                url: "../users/getById.action",
+                url: "./users/getById.action",
                 dataType: "json",
                 data: {
-                    uId: '1'//登录人id
+                    uId: loginUser.uId//登录人id
                 },
                 success: function (data) {
                     console.log(data);
@@ -42,7 +58,7 @@
                         $('#usernameBox').text(rows.uName + '早上好，欢迎使用手游代练平台');
                         $('#userId').text(rows.uId);
                         $('#userName').text(rows.uName);
-                        $('#userMoney').text(parseFloat(rows.uMoney));
+                        $('#userMoney').text(parseFloat(rows.uMonery));
                     } else {
                         //没有数据或服务器错误
                     }
@@ -55,7 +71,7 @@
             $.ajax({
                 type: "get",
                 async: false,
-                url: "../goods/list.action",
+                url: "./goods/list.action",
                 dataType: "json",
                 data: {
                     pageNum: page
@@ -68,18 +84,24 @@
                         for(var i=0;i<rows.length;i++){
                             var item = rows[i];
                             html += '<tr>';
-                            html += '<td><img src="images/img01.png"/></td>';
-                            html += '<td>'+item.gaDescribe+'</td>';
-                            html += '<td><a href="javascript:getQf(\''+item.gaId+'\')">区服</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:getInfo(\''+item.gaId+'\')">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:delGame(\''+item.gaId+'\')">删除</a></td>';
+                            html += '<td>'+item.gSId.sDescribe+'</td>';
+                            html += '<td>'+item.gName+'</td>';
+                            if(item.gSign == '1'){
+                            	html += '<td>发布中</td>';
+                            }else if(item.gSign == '2'){
+                            	html += '<td>进行中</td>';
+                            }else{
+                            	html += '<td>已完成</td>';
+                            }
                             html += '</tr>';
                         }
-                        $('#gamelist').empty().html(html);
+                        $('#goodslist').empty().html(html);
                         totlaPage = data.pageTotal;
                         nowPage = data.pageNum;
                         $('#pageNum').text(data.pageNum+'页/共'+data.pageTotal+'页');
                         var pageHtml = '';
                         if(nowPage == 1){
-                            pageHtml += '<li class="paginItem"><span class="pagepre"></span></li>';
+                            pageHtml += '<li class="paginItem"><a href><span class="pagepre"></span></a></li>';
                         }else{
                             pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)-1)+');"><span class="pagepre"></span></a></li>';
                         }
@@ -87,7 +109,7 @@
                             pageHtml += '<li class="paginItem"><a href="javascript:getData('+p+');">'+p+'</a></li>';
                         }
                         if(nowPage == 1){
-                            pageHtml += '<li class="paginItem"><span class="pagenxt"></span></li>'
+                            pageHtml += '<li class="paginItem"><a href><span class="pagenxt"></span></a></li>'
                         }else{
                             pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)+1)+');"><span class="pagenxt"></span></a></li>';
                         }
@@ -95,22 +117,180 @@
                         $('#pageDiv').show();
                     } else {
                         //没有数据或服务器错误
+                        html = '<tr><td colspan="3">暂无数据</td></tr>';
+                        $('#goodslist').empty().html(html);
+                        $('#pageDiv').hide();
                     }
 
                 }
             });
         }
 
-        function getPubOrderInfo() {
+        function getPubOrderInfo(page) {
+        	$.ajax({
+                type: "get",
+                async: false,
+                url: "./orderInfo/list.action",
+                dataType: "json",
+                data: {
+                    pageNum: page
+                },
+                success: function (data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.status == 'success') {
+                        var rows = data.data;
+                        for(var i=0;i<rows.length;i++){
+                            var item = rows[i];
+                            html += '<tr>';
+                            html += '<td>'+item.oGId.gSId.sDescribe+'</td>';
+                            html += '<td>'+item.oGId.gName+'</td>';
+                            if(item.oSign == '1'){
+                            	html += '<td>待确认</td>';
+                            }else if(item.gSign == '2'){
+                            	html += '<td>进行中</td>';
+                            }else if(item.gSign == '3'){
+                            	html += '<td>已完成</td>';
+                            }else{
+                            	html += '<td>已删除</td>';
+                            }
+                            html += '</tr>';
+                        }
+                        $('#orderlist').empty().html(html);
+                        totlaPage = data.pageTotal;
+                        nowPage = data.pageNum;
+                        $('#pageNum1').text(data.pageNum+'页/共'+data.pageTotal+'页');
+                        var pageHtml = '';
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><a href><span class="pagepre"></span></a></li>';
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)-1)+');"><span class="pagepre"></span></a></li>';
+                        }
+                        for(var p = 1 ; p <= totlaPage ; p++){
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+p+');">'+p+'</a></li>';
+                        }
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><a href><span class="pagenxt"></span></a></li>'
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)+1)+');"><span class="pagenxt"></span></a></li>';
+                        }
+                        $('#pageBox1').empty().html(pageHtml);
+                        $('#pageDiv1').show();
+                    } else {
+                        //没有数据或服务器错误
+                        html = '<tr><td colspan="3">暂无数据</td></tr>';
+                        $('#orderlist').empty().html(html);
+                        $('#pageDiv1').hide();
+                    }
 
+                }
+            });
         }
+        
+        function gonggao(){
+        	$.ajax({
+                type: "get",
+                async: false,
+                url: "./announcement/listAll.action",
+                dataType: "json",
+                data: {},
+                success: function (data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.status == 'success') {
+                        var rows = data.data;
+                        for(var i=0;i<rows.length;i++){
+                            var item = rows[i];
+                            html += '<li>'+item.aDescribe+'&nbsp;&nbsp;<a style="color:#3186c8;" href="javascript:jumpToOrder(\''+item.aUId.uId+'\')">'+item.aUId.uName+'</a></li>';
+                        }
+                        $('#gonggaolist').empty().html(html);
+                    } else {
+                        //没有数据或服务器错误
+                        html = '<li>暂无公告</li>';
+                        $('#gonggaolist').empty().html(html);
+                    }
+
+                }
+            });
+        }
+        
+        function jumpToOrder(uId){
+        	alert('跳转接单大厅传参aUid:'+uId);
+        }
+        
 
         function chongzhi() {
-
+        	$('#uMoney').val('');
+        	$("#chongzhi").fadeIn(200);
         }
 
         function tixian() {
+        	$('#uMoney1').val('');
+        	$("#tixian").fadeIn(200);
+        }
+        
+        function jine(type){
+        	var num = 0;
+        	if(type == 'add'){
+        		num = parseFloat(JSON.parse(Util.getLocalStorage("loginUser")).uMonery)+parseFloat($('#uMoney').val());
+        	}else{
+        		num = parseFloat(JSON.parse(Util.getLocalStorage("loginUser")).uMonery)-parseFloat($('#uMoney1').val())
+        	}
+        	var param = {
+       			uId: loginUser.uId,//登录人id
+       			uMonery: num
+        	}
+        	$.ajax({
+                type: "post",
+                async: false,
+                url: "./users/update.action",
+                dataType: "json",
+                data: param,
+                success: function (data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.status == 'success') {
+                    	Util.setLocalStorage("loginUser",JSON.stringify(data.loginUser));
+                    	if(type == 'add'){
+                    		$("#chongzhi").fadeOut(200);
+                    	}else{
+                    		$("#tixian").fadeOut(200);
+                    	}
+                    	getUserInfo();
+                    } else {
+                        //没有数据或服务器错误
+                    }
 
+                }
+            });
+        }
+        
+        function showAddGongGao(){
+        	$('#ggContent').val('');
+        	$("#addGG").fadeIn(200);
+        }
+        function saveGG(){
+        	$.ajax({
+                type: "post",
+                async: false,
+                url: "./announcement/save.action",
+                dataType: "json",
+                data: {
+                	aDescribe:encodeURI($('#ggContent').val()),
+                	aUId:loginUser.uId
+                },
+                success: function (data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.status == 'success') {
+                    	$("#addGG").fadeOut(200);
+                    	gonggao();
+                    } else {
+                        //没有数据或服务器错误
+                    }
+
+                }
+            });
         }
 
     </script>
@@ -133,12 +313,7 @@
 
         <div class="leftinfo" style="height: 120px !important;">
             <div class="listtitle">个人基本信息</div>
-
-            <div class="welinfo">
-                <span><img src="images/sun.png" alt="天气"/></span>
-                <b id="usernameBox"></b>
-            </div>
-            <div class="welinfo">
+            <div class="welinfo" style="margin-top: 2%;">
                 <span><img src="images/ico01.png" alt="用户"/></span>
                 <b>用户Id:<b id="userId">123456789</b></b>
                 <b>用户名:<b id="userName">Admin</b></b>
@@ -155,69 +330,21 @@
                 <table class="tablelist">
                     <thead>
                     <tr>
+                        <th>类别</th>
                         <th>标题</th>
-                        <th>发布时间</th>
                         <th>状态</th>
                     </tr>
                     </thead>
                     <tbody id="goodslist">
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
 
                     </tbody>
                 </table>
-                <div class="pagin">
-                    <div class="message">共<i class="blue">1256</i>条记录，当前显示第&nbsp;<i class="blue">2&nbsp;</i>页</div>
-                    <ul class="paginList">
-                        <li class="paginItem"><a href="javascript:;"><span class="pagepre"></span></a></li>
-                        <li class="paginItem"><a href="javascript:;">1</a></li>
-                        <li class="paginItem current"><a href="javascript:;">2</a></li>
-                        <li class="paginItem"><a href="javascript:;">3</a></li>
-                        <li class="paginItem"><a href="javascript:;">4</a></li>
-                        <li class="paginItem"><a href="javascript:;">5</a></li>
-                        <li class="paginItem more"><a href="javascript:;">...</a></li>
-                        <li class="paginItem"><a href="javascript:;">10</a></li>
-                        <li class="paginItem"><a href="javascript:;"><span class="pagenxt"></span></a></li>
-                    </ul>
-                </div>
+                <div class="pagin" id="pageDiv" style="display: none;">
+			        <div class="message">当前显示第&nbsp;<i class="blue" id="pageNum"></i>页/共&nbsp;<i class="blue" id="pageTotal"></i>页
+			        </div>
+			        <ul class="paginList" id="pageBox">
+			        </ul>
+			    </div>
                 <!--<ul class="newlist">
                     <li><a href="#">上海自贸区今日正式挂牌成立</a><b>10-09</b></li>
                     <li><a href="#">习近平将访东南亚两国 首次出席APEC峰会</a><b>10-08</b></li>
@@ -236,85 +363,21 @@
                 <table class="tablelist">
                     <thead>
                     <tr>
+                        <th>类别</th>
                         <th>标题</th>
-                        <th>发布时间</th>
                         <th>状态</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
-                    <tr>
-                        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-                        <td>2013-09-09 15:05</td>
-                        <td>已审核</td>
-                    </tr>
+                    <tbody id="orderlist">
 
                     </tbody>
                 </table>
-                <div class="pagin">
-                    <div class="message">共<i class="blue">1256</i>条记录，当前显示第&nbsp;<i class="blue">2&nbsp;</i>页</div>
-                    <ul class="paginList">
-                        <li class="paginItem"><a href="javascript:;"><span class="pagepre"></span></a></li>
-                        <li class="paginItem"><a href="javascript:;">1</a></li>
-                        <li class="paginItem current"><a href="javascript:;">2</a></li>
-                        <li class="paginItem"><a href="javascript:;">3</a></li>
-                        <li class="paginItem"><a href="javascript:;">4</a></li>
-                        <li class="paginItem"><a href="javascript:;">5</a></li>
-                        <li class="paginItem more"><a href="javascript:;">...</a></li>
-                        <li class="paginItem"><a href="javascript:;">10</a></li>
-                        <li class="paginItem"><a href="javascript:;"><span class="pagenxt"></span></a></li>
-                    </ul>
-                </div>
-                <!--<ul class="tooli">
-                    <li><span><img src="images/d01.png"/></span>
-                        <p><a href="#">信息资料</a></p></li>
-                    <li><span><img src="images/d02.png"/></span>
-                        <p><a href="#">编辑</a></p></li>
-                    <li><span><img src="images/d03.png"/></span>
-                        <p><a href="#">记事本</a></p></li>
-                    <li><span><img src="images/d04.png"/></span>
-                        <p><a href="#">任务日历</a></p></li>
-                    <li><span><img src="images/d05.png"/></span>
-                        <p><a href="#">图片管理</a></p></li>
-                    <li><span><img src="images/d06.png"/></span>
-                        <p><a href="#">交易</a></p></li>
-                    <li><span><img src="images/d07.png"/></span>
-                        <p><a href="#">档案袋</a></p></li>
-                </ul>-->
+                <div class="pagin" id="pageDiv1" style="display: none;">
+			        <div class="message">当前显示第&nbsp;<i class="blue" id="pageNum1"></i>页/共&nbsp;<i class="blue" id="pageTotal1"></i>页
+			        </div>
+			        <ul class="paginList" id="pageBox1">
+			        </ul>
+			    </div>
 
             </div>
 
@@ -329,49 +392,61 @@
     <div class="mainright">
 
 
-        <div class="dflist" style="height: 530px !important;">
-            <div class="listtitle"><a href="#" class="more1">更多</a>最新公告</div>
-            <ul class="newlist">
-                <li><a href="#">上海自贸区今日正式挂牌成立</a></li>
-                <li><a href="#">习近平将访东南亚两国 首次出席APEC峰会</a></li>
-                <li><a href="#">最高法:谎称炸弹致航班备降者从重追刑责</a></li>
-                <li><a href="#">华北大部遭遇雾霾天 北京全城陷重污染</a></li>
-                <li><a href="#">"环保专家"董良杰涉嫌寻衅滋事被刑拘</a></li>
-                <li><a href="#">中央巡视组：重庆对一把手监督不到位</a></li>
-                <li><a href="#">囧!悍马没改好成华丽马车(图)</a></li>
-                <li><a href="#">澳门黄金周加派稽查人员监察出租车违规行为</a></li>
-                <li><a href="#">香港环境局长吁民众支持政府扩建堆填区</a></li>
-                <li><a href="#">上海自贸区今日正式挂牌成立</a></li>
-                <li><a href="#">习近平将访东南亚两国 首次出席APEC峰会</a></li>
-                <li><a href="#">最高法:谎称炸弹致航班备降者从重追刑责</a></li>
-                <li><a href="#">华北大部遭遇雾霾天 北京全城陷重污染</a></li>
-                <li><a href="#">"环保专家"董良杰涉嫌寻衅滋事被刑拘</a></li>
-                <li><a href="#">中央巡视组：重庆对一把手监督不到位</a></li>
-                <li><a href="#">囧!悍马没改好成华丽马车(图)</a></li>
-                <li><a href="#">澳门黄金周加派稽查人员监察出租车违规行为</a></li>
-                <li><a href="#">香港环境局长吁民众支持政府扩建堆填区</a></li>
+        <div class="dflist" style="height: 530px !important; overflow: auto;">
+            <div class="listtitle"><a href="javascript:showAddGongGao()" class="more1">申请</a>最新公告</div>
+            <ul class="newlist" id="gonggaolist">
             </ul>
         </div>
-
-
-        <!--<div class="dflist1">
-            <div class="listtitle"><a href="#" class="more1">更多</a>信息统计</div>
-            <ul class="newlist">
-                <li><i>会员数：</a></i>2535462</li>
-                <li><i>文档数：</a></i>5546</li>
-                <li><i>普通文章：</a></i>2315</li>
-                <li><i>软件：</a></i>1585</li>
-                <li><i>评论数：</a></i>5342</li>
-            </ul>
-        </div>-->
-
-
     </div>
     <!--mainright end-->
 
 
 </div>
+<div class="tip" id="chongzhi">
+    <div class="tiptop"><span>提示信息</span><a></a></div>
 
+    <div class="tipinfo">
+        <div class="formbody">
+            <ul class="forminfo">
+                <li>
+                    <label>充值金额</label>
+                    <input type="text" class="dfinput" id="uMoney">
+                </li>
+                <li><label>&nbsp;</label><input name="" type="button" class="btn" value="确认保存" style="margin-top: 8px;" onclick="jine('add');"></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="tip" id="tixian">
+    <div class="tiptop"><span>提示信息</span><a></a></div>
+
+    <div class="tipinfo">
+        <div class="formbody">
+            <ul class="forminfo">
+                <li>
+                    <label>提现金额</label>
+                    <input type="text" class="dfinput" id="uMoney1">
+                </li>
+                <li><label>&nbsp;</label><input name="" type="button" class="btn" value="确认保存" style="margin-top: 8px;" onclick="jine('jian');"></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="tip" id="addGG" style="width:605px !important; height:340px !important;">
+    <div class="tiptop"><span>申请公告</span><a></a></div>
+
+    <div class="tipinfo" style="padding:0 !important; margin:0 !important;">
+        <div class="formbody">
+            <ul class="forminfo">
+                <li>
+                    <label>公告内容</label>
+                    <textarea id="ggContent" cols="" rows="3" class="textinput"></textarea>
+                </li>
+                <li style="text-align: center;"><input name="" type="button" class="btn" value="确认保存" style="margin-top: 8px;" onclick="saveGG();"></li>
+            </ul>
+        </div>
+    </div>
+</div>
 
 </body>
 <script type="text/javascript">

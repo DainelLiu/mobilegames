@@ -1,6 +1,7 @@
 package com.lmt.action;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,7 +60,7 @@ public class AnnouncementAction {
 	 */
 	@Action(value = "save")
 	public String save() throws IOException {
-		String aDescribe = ServletActionContext.getRequest().getParameter("aDescribe");
+		String aDescribe = URLDecoder.decode(ServletActionContext.getRequest().getParameter("aDescribe"),"utf-8");
 		String aUId = ServletActionContext.getRequest().getParameter("aUId");
 		Date day = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

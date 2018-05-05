@@ -5,14 +5,21 @@
 <title>无标题文档</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <script language="JavaScript" src="js/jquery.js"></script>
+<script language="JavaScript" src="js/util.js"></script>
 <script type="text/javascript">
+var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
 $(function(){	
 	//顶部导航切换
 	$(".nav li a").click(function(){
 		$(".nav li a.selected").removeClass("selected")
 		$(this).addClass("selected");
-	})	
-})	
+	})
+	$('#username').text(loginUser.uName);
+});
+function loginout(){
+	Util.clearLocalStorage();
+	window.location.href = 'login.html';
+}
 </script>
 
 
@@ -26,25 +33,24 @@ $(function(){
         
     <ul class="nav">
     <li><a href="index.html" target="bottomFrame" class="selected"><img src="images/icon01.png" title="首页" /><h2>首页</h2></a></li>
-    <li><a href="imgtable.html" target="bottomFrame"><img src="images/icon02.png" title="发单管理" /><h2>发单管理</h2></a></li>
+    <li><a href="goodslist.html" target="bottomFrame"><img src="images/icon02.png" title="发单管理" /><h2>发单管理</h2></a></li>
     <li><a href="imglist.html"  target="bottomFrame"><img src="images/icon03.png" title="接单大厅" /><h2>接单大厅</h2></a></li>
     <li><a href="tools.html"  target="bottomFrame"><img src="images/icon04.png" title="接单管理" /><h2>接单管理</h2></a></li>
     <li><a href="computer.html" target="bottomFrame"><img src="images/icon05.png" title="个人中心" /><h2>个人中心</h2></a></li>
     </ul>
 
     <div class="topright">
-        <ul>
-            <li><span><img src="images/help.png" title="帮助"  class="helpimg"/></span><a href="#">帮助</a></li>
-            <li><a href="#">关于</a></li>
-            <li><a href="login.html" target="_parent">退出</a></li>
-        </ul>
+		<ul>
+			<li><span><img src="images/help.png" title="帮助"
+					class="helpimg" /></span><a href="#">帮助</a></li>
+			<li><a href="#">关于</a></li>
+			<li><a href="javascript:loginout()" target="_parent">退出</a></li>
+		</ul>
 
-        <div class="user">
-            <span>admin</span>
-            <i>消息</i>
-            <b>5</b>
-        </div>
-    
-    </div>
+		<div class="user">
+			<span id="username">admin</span>
+		</div>
+
+	</div>
 </body>
 </html>

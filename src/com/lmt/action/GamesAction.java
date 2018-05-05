@@ -1,6 +1,7 @@
 package com.lmt.action;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,8 +97,11 @@ public class GamesAction {
 	public String update() throws IOException{
 		
 		String gaId = ServletActionContext.getRequest().getParameter("gaId");
+		String gaDescribe = URLDecoder.decode(ServletActionContext.getRequest().getParameter("gaDescribe"),"utf-8");
 		
-		Games games = gamesDao.getById(gaId);
+		Games games = new Games();
+		games.setgaId(gaId);
+		games.setgaDescribe(gaDescribe);
 		JSONObject jobj = new JSONObject();
 		
 		if(gamesDao.update(games)) {
@@ -127,6 +131,7 @@ public class GamesAction {
 			//save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
+			jobj.put("data",games);
 		}else{
 			//save failed
 			jobj.put("mes", "获取失败!");

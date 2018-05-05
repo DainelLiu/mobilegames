@@ -1,6 +1,7 @@
 package com.lmt.action;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ private IGamesDao gamesDao;
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
-		String zDescribe = ServletActionContext.getRequest().getParameter("zDescribe");
+		String zDescribe = URLDecoder.decode(ServletActionContext.getRequest().getParameter("zDescribe"),"utf-8");
 		String zGaId = ServletActionContext.getRequest().getParameter("zGaId");
 		
 		Zone zone = new Zone();
@@ -194,6 +195,27 @@ private IGamesDao gamesDao;
 			//save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(zoneTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	@Action(value="listAllByGaId")
+	public String listAllByGaId() throws IOException{
+
+		String gaId = ServletActionContext.getRequest().getParameter("zGaId");
+		List<Object> zoneTypelist = zoneDao.getAllByConds("from Zone where zGaId='" + gaId + "'");//获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if(zoneTypelist.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+
 			jobj.put("data", JsonUtil.toJsonByListObj(zoneTypelist));
 		}else{
 			//save failed
