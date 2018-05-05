@@ -43,7 +43,7 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
         $.ajax({
             type: "get",
             async: false,
-            url: "./goods/list.action",
+            url: "./goods/listByState.action",
             dataType: "json",
             data: {
                 pageNum: page
@@ -63,8 +63,12 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
                         html += '<td>'+item.gOTime+'</td>';
                         html += '<td>'+item.gDuration+'</td>';
                         html += '<td id="p'+item.gId+'">'+item.gPrice+'</td>';
+                        if(item.gSign == '1'){
+                        	html += '<td><a href="javascript:addOrder(\''+item.gId+'\')" class="tablelink"> 接单</a></td>';
+                        }else{
+                        	html += '<td></td>';
+                        }
                         
-                        html += '<td><a href="javascript:addOrder(\''+item.gId+'\')" class="tablelink"> 接单</a></td>';
                         html += '</tr>';
                     }
                     $('#goodslist').empty().html(html);
