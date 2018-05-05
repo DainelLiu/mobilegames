@@ -4,6 +4,109 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>无标题文档</title>
     <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script language="javascript">
+        $(function () {
+            //导航切换
+            $(".imglist li").click(function () {
+                $(".imglist li.selected").removeClass("selected")
+                $(this).addClass("selected");
+            })
+        })
+    </script>
+    <script type="text/javascript">
+        var nowPage = 1;
+        var totlaPage = 1;
+        $(document).ready(function () {
+            $(".click").click(function () {
+                $(".tip").fadeIn(200);
+            });
+
+            $(".tiptop a").click(function () {
+                $(".tip").fadeOut(200);
+            });
+
+            $(".sure").click(function () {
+                $(".tip").fadeOut(100);
+            });
+
+            $(".cancel").click(function () {
+                $(".tip").fadeOut(100);
+            });
+            getData(1);
+            getDataTwo();
+        });
+
+        function getData(page) {
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "../monies/list.action",
+                dataType: "json",
+                data: {
+                    pageNum: page
+                },
+                success: function (data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.status == 'success') {
+                        var rows = data.data;
+                        for (var i = 0; i < rows.length; i++) {
+                            var item = rows[i];
+                            html += '<tr>';
+                            html += '<td>' + item.mTime + '</td>';
+                            html += '<td>' + item.mChange + '</td>';
+                            html += '</tr>';
+                        }
+                        $('#monieslist').empty().html(html);
+                        totlaPage = data.pageTotal;
+                        nowPage = data.pageNum;
+                        $('#pageNum').text(data.pageNum);
+                        $('#pageTotal').text(data.pageTotal);
+                        var pageHtml = '';
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><span class="pagepre"></span></li>';
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)-1)+');"><span class="pagepre"></span></a></li>';
+                        }
+                        for(var p = 1 ; p <= totlaPage ; p++){
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+p+');">'+p+'</a></li>';
+                        }
+                        if(nowPage == 1){
+                            pageHtml += '<li class="paginItem"><span class="pagenxt"></span></li>'
+                        }else{
+                            pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)+1)+');"><span class="pagenxt"></span></a></li>';
+                        }
+                        $('#pageBox').empty().html(pageHtml);
+                        $('#pageDiv').show();
+                    } else {
+                        //没有数据或服务器错误
+                        html += '<td colspan="9">暂无数据</td>';
+                        $('#monieslist').empty().html(html);
+                        $('#pageDiv').hide();
+                    }
+                }
+            });
+        }
+        
+        function getDataTwo() {
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "../users/getByUPower.action",
+                dataType: "json",
+                 success: function (data) {
+                    console.log(data);
+                    if (data.status == 'success') {
+                    	$('#zhye').text(data.data.uMonery);
+                    } else {
+                        //没有数据或服务器错误
+                    }
+                }
+            });
+        }
+        
+    </script>
 </head>
 
 <body>
@@ -20,7 +123,7 @@
 
     <div class="formtitle" style="margin-bottom: 0px !important;"><span>账户信息</span></div>
     <div class="welinfo">
-        <b>账户余额:<b>100.0</b>元</b>
+        <b>账户余额:<b id="zhye"></b>元</b>
     </div>
 
 
@@ -31,46 +134,23 @@
         <tr>
             <th>时间</th>
             <th>支出/收入</th>
-            <th>当前余额</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <td>2013-09-09 15:05</td>
-            <td style="color: #1bebae;font-weight: bold;">+50</td>
-            <td>50</td>
-        </tr>
-        <tr>
-            <td>2013-09-09 15:05</td>
-            <td style="color: #eb6d46;font-weight: bold;">-30</td>
-            <td>50</td>
-        </tr>
-        <tr>
-            <td>2013-09-09 15:05</td>
-            <td style="color: #1bebae;font-weight: bold;">+20</td>
-            <td>50</td>
-        </tr>
-        </tbody>
+         <tbody id="monieslist"></tbody>
     </table>
 
 
-    <div class="pagin">
-        <div class="message">共<i class="blue">1256</i>条记录，当前显示第&nbsp;<i class="blue">2&nbsp;</i>页</div>
-        <ul class="paginList">
-            <li class="paginItem"><a href="javascript:;"><span class="pagepre"></span></a></li>
-            <li class="paginItem"><a href="javascript:;">1</a></li>
-            <li class="paginItem current"><a href="javascript:;">2</a></li>
-            <li class="paginItem"><a href="javascript:;">3</a></li>
-            <li class="paginItem"><a href="javascript:;">4</a></li>
-            <li class="paginItem"><a href="javascript:;">5</a></li>
-            <li class="paginItem more"><a href="javascript:;">...</a></li>
-            <li class="paginItem"><a href="javascript:;">10</a></li>
-            <li class="paginItem"><a href="javascript:;"><span class="pagenxt"></span></a></li>
+   <div class="pagin" id="pageDiv" style="display: none;">
+        <div class="message">当前显示第&nbsp;<i class="blue" id="pageNum"></i>页/共&nbsp;<i class="blue" id="pageTotal"></i>页</div>
+        <ul class="paginList" id="pageBox">
         </ul>
     </div>
 
 
 
 </div>
+<script type="text/javascript">
+    $('.tablelist tbody tr:odd').addClass('odd');
+</script>
 </body>
 </html>
