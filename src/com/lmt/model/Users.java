@@ -23,7 +23,7 @@ public class Users implements Serializable{
 	private String uPassword;
 	private String uPhone;
 	private String uMail;
-	private String uPictuer;
+	private String uPicture;
 	private BigDecimal uFraction;
 	private int uGrade;
 	private String uPower;
@@ -33,7 +33,7 @@ public class Users implements Serializable{
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Users(String uId, String uName, String uPassword, String uPhone, String uMail, String uPictuer,
+	public Users(String uId, String uName, String uPassword, String uPhone, String uMail, String uPicture,
 			BigDecimal uFraction, int uGrade, String uPower, int uSign, BigDecimal uMonery) {
 		super();
 		this.uId = uId;
@@ -41,7 +41,7 @@ public class Users implements Serializable{
 		this.uPassword = uPassword;
 		this.uPhone = uPhone;
 		this.uMail = uMail;
-		this.uPictuer = uPictuer;
+		this.uPicture = uPicture;
 		this.uFraction = uFraction;
 		this.uGrade = uGrade;
 		this.uPower = uPower;
@@ -51,7 +51,7 @@ public class Users implements Serializable{
 	@Override
 	public String toString() {
 		return "Users [uId=" + uId + ", uName=" + uName + ", uPassword=" + uPassword + ", uPhone=" + uPhone + ", uMail="
-				+ uMail + ", uPictuer=" + uPictuer + ", uFraction=" + uFraction + ", uGrade=" + uGrade + ", uPower="
+				+ uMail + ", uPictuer=" + uPicture + ", uFraction=" + uFraction + ", uGrade=" + uGrade + ", uPower="
 				+ uPower + ", uSign=" + uSign + ", uMonery=" + uMonery + "]";
 	}
 	@Id
@@ -87,11 +87,11 @@ public class Users implements Serializable{
 	public void setuMail(String uMail) {
 		this.uMail = uMail;
 	}
-	public String getuPictuer() {
-		return uPictuer;
+	public String getuPicture() {
+		return uPicture;
 	}
-	public void setuPictuer(String uPictuer) {
-		this.uPictuer = uPictuer;
+	public void setuPictuer(String uPicture) {
+		this.uPicture = uPicture;
 	}
 	public BigDecimal getuFraction() {
 		return uFraction;
