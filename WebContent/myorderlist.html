@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script language="javascript">
+	$(function() {
+		//导航切换
+		$(".imglist li").click(function() {
+			$(".imglist li.selected").removeClass("selected")
+			$(this).addClass("selected");
+		});
+		
+	})
+</script>
+<script type="text/javascript">
+var nowPage = 1;
+var totalPage = 1;
+var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
+	$(document).ready(function() {
+		$(".click").click(function() {
+			$("#addDiv").fadeIn(200);
+		});
+
+		$("#addDiv .tiptop a").click(function() {
+			$("#addDiv").fadeOut(200);
+		});
+
+		$("#addDiv .sure").click(function() {
+			$("#addDiv").fadeOut(100);
+		});
+
+		$(".cancel").click(function() {
+			$("#addDiv").fadeOut(100);
+		});
+		getOrderInfo(1);
+	});
+	
+	function getOrderInfo(page) {
+        $.ajax({
+            type: "get",
+            async: false,
+            url: "./orderInfo/listByUId.action",
+            dataType: "json",
+            data: {
+                pageNum: page,
+                oUId:loginUser.uId
+            },
+            success: function (data) {
+                console.log(data);
+                var html = '';
+                if (data.status == 'success') {
+                    var rows = data.data;
+                    for(var i=0;i<rows.length;i++){
+                        var item = rows[i];
+                        html += '<tr>';
+                        html += '<td>'+item.gSId.sDescribe+'</td>';
+                        html += '<td>'+item.gZId.zGaId.gaDescribe+' '+item.gZId.zDescribe+'</td>';
+                        html += '<td>'+item.gName+'<p>内容:'+item.gDescribe+'</p></td>';
+                        html += '<td>'+item.gSTime+'</td>';
+                        html += '<td>'+item.gOTime+'</td>';
+                        html += '<td>'+item.gDuration+'</td>';
+                        html += '<td id="p'+item.gId+'">'+item.gPrice+'</td>';
+                        if(item.gSign == '1'){
+                        	html += '<td><a href="javascript:addOrder(\''+item.gId+'\')" class="tablelink"> 接单</a></td>';
+                        }else{
+                        	html += '<td></td>';
+                        }
+                        
+                        html += '</tr>';
+                    }
+                    $('#goodslist').empty().html(html);
+                    totalPage = data.pageTotal;
+                    nowPage = data.pageNum;
+                    $('#pageNum').text(nowPage);
+                    $('#pageTotal').text(totalPage);
+                    var pageHtml = '';
+                    if(nowPage == 1){
+                        pageHtml += '<li class="paginItem"><a href><span class="pagepre"></span></a></li>';
+                    }else{
+                        pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)-1)+');"><span class="pagepre"></span></a></li>';
+                    }
+                    for(var p = 1 ; p <= totalPage ; p++){
+                        pageHtml += '<li class="paginItem"><a href="javascript:getData('+p+');">'+p+'</a></li>';
+                    }
+                    if(nowPage == 1){
+                        pageHtml += '<li class="paginItem"><a href><span class="pagenxt"></span></a></li>'
+                    }else{
+                        pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)+1)+');"><span class="pagenxt"></span></a></li>';
+                    }
+                    $('#pageBox').empty().html(pageHtml);
+                    $('#pageDiv').show();
+                } else {
+                    //没有数据或服务器错误
+                    html = '<tr><td colspan="9">暂无数据</td></tr>';
+                    $('#goodslist').empty().html(html);
+                    $('#pageDiv').hide();
+                }
+            }
+        });
+    }
+</script>
+</head>
+
+
+<body>
+
+	<div class="place">
+		<span>位置：</span>
+		<ul class="placeul">
+			<li><a href="#">首页</a></li>
+			<li><a href="#">商品列表</a></li>
+		</ul>
+	</div>
+
+	<div class="rightinfo">
+
+		<table class="imgtable">
+
+			<thead>
+				<tr>
+					<th>类别</th>
+					<th>游戏&区服</th>
+					<th>标题</th>
+					<th>开始时间</th>
+					<th>结束时间</th>
+					<th>时长</th>
+					<th>价格</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+
+			<tbody id="goodslist">
+
+			</tbody>
+
+		</table>
+
+		<div class="pagin" id="pageDiv" style="display: none;">
+	        <div class="message">当前显示第&nbsp;<i class="blue" id="pageNum"></i>页/共&nbsp;<i class="blue" id="pageTotal"></i>页
+	        </div>
+	        <ul class="paginList" id="pageBox">
+	        </ul>
+	    </div>
+
+	</div>
+	<script type="text/javascript">
+		$('.imgtable tbody tr:odd').addClass('odd');
+	</script>
+</body>
+</html>

@@ -13,6 +13,8 @@
 
     <script type="text/javascript">
         gvChartInit();
+        var totlaPage = 1;
+        var nowPage = 1;
         var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
         $(function () {
         	$(".click").click(function () {
@@ -98,6 +100,8 @@
                         $('#goodslist').empty().html(html);
                         totlaPage = data.pageTotal;
                         nowPage = data.pageNum;
+                        $('#pageNum').text(nowPage);
+                        $('#pageTotal').text(totlaPage);
                         var pageHtml = '';
                         if(nowPage == 1){
                             pageHtml += '<li class="paginItem"><a href><span class="pagepre"></span></a></li>';
@@ -156,8 +160,10 @@
                             html += '</tr>';
                         }
                         $('#orderlist').empty().html(html);
-                        totlaPage = data.pageTotal;
-                        nowPage = data.pageNum;
+                        totlaPage1 = data.pageTotal;
+                        nowPage1 = data.pageNum;
+                        $('#pageNum1').text(nowPage1);
+                        $('#pageTotla1').text(totlaPage1);
                         var pageHtml = '';
                         if(nowPage == 1){
                             pageHtml += '<li class="paginItem"><a href><span class="pagepre"></span></a></li>';

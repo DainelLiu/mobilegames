@@ -277,7 +277,7 @@ public class AnnouncementAction {
 			list = announcementDao.getByConds(hql,page);// 带分页
 		}
 		JSONObject jobj = new JSONObject();
-		if (announcementTypelist.size() > 0) {
+		if (list.size() > 0) {
 			// save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
