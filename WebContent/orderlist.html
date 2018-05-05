@@ -13,9 +13,6 @@
 			$(".imglist li.selected").removeClass("selected")
 			$(this).addClass("selected");
 		});
-		$('#gamelist').change(function(){
-			getQf($(this).find("option:selected").val());
-		});
 		
 	})
 </script>
@@ -40,18 +37,16 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
 			$("#addDiv").fadeOut(100);
 		});
 		getGoodsInfo(1);
-		getGames();
 	});
 	
 	function getGoodsInfo(page) {
         $.ajax({
             type: "get",
             async: false,
-            url: "./goods/listByUId.action",
+            url: "./goods/list.action",
             dataType: "json",
             data: {
-                pageNum: page,
-                gUId:loginUser.uId
+                pageNum: page
             },
             success: function (data) {
                 console.log(data);
@@ -67,20 +62,9 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
                         html += '<td>'+item.gSTime+'</td>';
                         html += '<td>'+item.gOTime+'</td>';
                         html += '<td>'+item.gDuration+'</td>';
-                        html += '<td>'+item.gPrice+'</td>';
-                        if(item.gSign == '1'){
-                        	html += '<td>发布中</td>';
-                        	html += '<td><a href="javascript:setState(\''+item.gId+'\')" class="tablelink"> 下架</a></td>';
-                        }else if(item.gSign == '2'){
-                        	html += '<td>进行中</td>';
-                        	html += '<td></td>';
-                        }else if(item.gSign == '3'){
-                        	html += '<td>已完成</td>';
-                        	html += '<td></td>';
-                        }else{
-                        	html += '<td>已下架</td>';
-                        	html += '<td></td>';
-                        }
+                        html += '<td id="p'+item.gId+'">'+item.gPrice+'</td>';
+                        
+                        html += '<td><a href="javascript:addOrder(\''+item.gId+'\')" class="tablelink"> 接单</a></td>';
                         html += '</tr>';
                     }
                     $('#goodslist').empty().html(html);
@@ -113,119 +97,26 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
             }
         });
     }
-	function setState(id){
-		$.ajax({
-            type: "post",
-            async: false,
-            url: "./goods/update.action",
-            dataType: "json",
-            data: {
-            	gId:id,
-            	gSign:'4'
-            },
-            success: function (data) {
-                console.log(data);
-                if (data.status == 'success') {
-                	getGoodsInfo(1);
-            		getGames();
-                } else {
-                    //没有数据或服务器错误
-                }
-
-            }
-        });
-	}
-	function getGames(){
-		$.ajax({
-            type: "get",
-            async: false,
-            url: "./games/listAll.action",
-            dataType: "json",
-            data: {},
-            success: function (data) {
-                console.log(data);
-                var html = '';
-                var rows = data.data;
-                if (data.status == 'success') {
-                	for(var i = 0 ; i < rows.length ; i++){
-                		var item = rows[i];
-                		if(i == 0){
-                			html += '<option value="'+item.gaId+'" selected>'+item.gaDescribe+'</option>';
-                			getQf(item.gaId);
-                		}else{
-	                		html += '<option value="'+item.gaId+'">'+item.gaDescribe+'</option>';
-                		}
-                	}
-                	$("#gamelist").empty().append(html);
-                } else {
-                    //没有数据或服务器错误
-                }
-
-            }
-        });
-	}
-	function getQf(gaId) {
-        $.ajax({
-            type: "get",
-            async: false,
-            url: "./zone/listAllByGaId.action",
-            dataType: "json",
-            data: {
-                zGaId: gaId
-            },
-            success: function (data) {
-                console.log(data);
-                var html = '';
-                if (data.status == 'success') {
-                    var rows = data.data;
-                    for (var i = 0; i < rows.length; i++) {
-                        var item = rows[i];
-                        if(i == 0){
-                			html += '<option value="'+item.zId+'" selected>'+item.zDescribe+'</option>';
-                			getQf(item.gaId);
-                		}else{
-	                		html += '<option value="'+item.zId+'">'+item.zDescribe+'</option>';
-                		}
-                    }
-                    $('#gameqflist').empty().append(html);
-                } else {
-                    //没有数据或服务器错误
-                    html += '<option selected>暂无区服</option>';
-                    $('#gameqflist').empty().append(html);
-                }
-            }
-        });
-    }
 	
-	function addGoods(){
+	function addOrder(id){
 		$.ajax({
             type: "post",
             async: false,
-            url: "./goods/save.action",
+            url: "./orderInfo/save.action",
             dataType: "json",
             data: {
-            	gName:$('#biaoti').val(),
-            	gSId:$('#style').val(),
-            	gPrice:$('#price').val(),
-            	gDescribe:'游戏账号:'+$('#gameuname').val()+','+$('#gameDes').val(),
-            	gSTime:$('#test5').val(),
-            	gOTime:$('#test6').val(),
-            	gDuration:$('#gameDur').val(),
-            	gZId:$('#gameqflist').val(),
-            	gUId:loginUser.uId,
-            	gSign:'1'
+            	oUId:loginUser.uId,
+            	oGId:id,
+            	oTotal:$('#p'+id).text()
             },
             success: function (data) {
                 console.log(data);
-                var html = '';
                 if (data.status == 'success') {
                 	getGoodsInfo(1);
-            		getGames();
                 } else {
-                	//添加失败
-                	alert(data.mes);
+                    //没有数据或服务器错误
                 }
-                $('#addDiv').fadeOut(200);
+
             }
         });
 	}
@@ -245,14 +136,6 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
 
 	<div class="rightinfo">
 
-		<div class="tools">
-
-			<ul class="toolbar">
-				<li class="click"><span><img src="images/t01.png" /></span>添加</li>
-			</ul>
-		</div>
-
-
 		<table class="imgtable">
 
 			<thead>
@@ -264,7 +147,6 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
 					<th>结束时间</th>
 					<th>时长</th>
 					<th>价格</th>
-					<th>状态</th>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -345,18 +227,8 @@ var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
 
 
 	</div>
-	<script src="js/laydate/laydate.js"></script>
 	<script type="text/javascript">
 		$('.imgtable tbody tr:odd').addClass('odd');
-		//时间选择器
-	    laydate.render({
-	      elem: '#test5'
-	      ,type: 'datetime'
-	    });
-	    laydate.render({
-		      elem: '#test6'
-		      ,type: 'datetime'
-		    });
 	</script>
 </body>
 </html>

@@ -98,7 +98,6 @@
                         $('#goodslist').empty().html(html);
                         totlaPage = data.pageTotal;
                         nowPage = data.pageNum;
-                        $('#pageNum').text(data.pageNum+'页/共'+data.pageTotal+'页');
                         var pageHtml = '';
                         if(nowPage == 1){
                             pageHtml += '<li class="paginItem"><a href><span class="pagepre"></span></a></li>';
@@ -159,7 +158,6 @@
                         $('#orderlist').empty().html(html);
                         totlaPage = data.pageTotal;
                         nowPage = data.pageNum;
-                        $('#pageNum1').text(data.pageNum+'页/共'+data.pageTotal+'页');
                         var pageHtml = '';
                         if(nowPage == 1){
                             pageHtml += '<li class="paginItem"><a href><span class="pagepre"></span></a></li>';
@@ -191,7 +189,7 @@
         	$.ajax({
                 type: "get",
                 async: false,
-                url: "./announcement/listAll.action",
+                url: "./announcement/listByView.action",
                 dataType: "json",
                 data: {},
                 success: function (data) {

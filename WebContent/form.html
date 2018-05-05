@@ -1,148 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>正则验证注册页面</title>
-    <style type="text/css">
-        .red{
-            color:#cc0000;
-            font-weight:bold;
-        }
-    </style>
-    <script type="text/javascript" src="js/jquery-1.8.3.js"></script>
-    <script language="JavaScript">
-        function $(elementId){
-            return document.getElementById(elementId).value;
-        }
-        function divId(elementId){
-            return document.getElementById(elementId);
-        }
-        //    用户名验证
-        function checkUser(){
-            var user = $("user");
-            var userId = divId("user_prompt");
-            userId.innerHTML="";
-            var reg=/^[a-zA-Z][a-zA-Z0-9]{3,15}$/;
-            if(reg.test(user)==false){
-                userId.innerHTML="用户名不正确";
-                return false;
-            }
-            return true;
-        }
-        //    password check
-        function checkPwd(){
-            var pwd = $("pwd");
-            var pwdId = divId("pwd_prompt");
-            pwdId.innerHTML="";
-            var reg = /^[a-zA-Z0-9]{4,10}$/;
-            if(reg.test(pwd)==false){
-                pwdId.innerHTML = "密码不能含有非法字符，长度在4-10之间";
-                return false;
-            }
-            return true;
-        }
-        function checkRepwd(){
-            var repwd = $("repwd");
-            var pwd = $("pwd");
-            var repwdId = divId("repwd_prompt");
-            repwdId.innerHTML=""
-            if(pwd!=repwd){
-                repwdId.innerHTML="两次密码不一致";
-                return false;
-            }
-            return true;
-        }
-        //   邮箱验证
-        function checkEmail(){
-            var email = $("email");
-            var email_prompt = divId("email_prompt");
-            email_prompt.innerHTML="";
-            var reg = /^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/;
-            if(reg.test(email)==false){
-                email_prompt.innerHTML="Email格式不对，请输入正确email";
-                return false;
-            }
-            return true;
-        }
-        //      手机号验证
-        function checkMobile() {
-            var mobile = $("mobile");
-            var mobileId = divId("mobile_prompt");
-            mobileId.innerHTML="";
-            var reMobile = /^1\d{10}$/;
-            if (reMobile.test(mobile)==false){
-                mobileId.innerHTML="手机号输入有误";
-                return false;
-            }
-            return true;
-        }
-        //    生日验证
-        function checkBirth(){
-            var birth = $("birth");
-            var birthId = divId("birth_prompt");
-            birthId.innerHTML="";
-            var reg = /^((19\d{2})|(200\d))-(0?[1-9]|1[0-2])-(0?[1-9]|[1-2]\d|3[0-1])$/;
-            if(reg.test(birth)==false){
-                birthId.innerHTML="生日格式不对";
-                return false;
-            }
-            return true;
-        }
-    </script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
+
 <body>
-<table class="main" border="0" callpadding="0" cellspacing="0">
-    <tr>
-        <td><img src="images/logo.jpg" alt="logo"><img src="images/banner.jpg" alt="banner"></td>
-    </tr>
-    <tr>
-        <td class="hr_1">新用户注册</td>
-    </tr>
-    <tr>
-        <td style="height: 10px;"></td>
-    </tr>
-    <form action="../users/save.action" method="post" name="myform">
-        <tr>
-            <td><table>
-                <tr>
-                    <td class="left">用户名：</td>
-                    <td class="center"><input type="text" id="user" class="in" name="uName" onblur="checkUser()"></td>
-                    <td><div id="user_prompt">用户名由英文字母和数字组成-4到16位字符，以字母开头</div></td>
-                </tr>
-                <tr>
-                    <td class="left">密码：</td>
-                    <td class="center"><input type="password" id="pwd" class="in" name="uPassword" onblur="checkPwd()"></td>
-                    <td><div id="pwd_prompt">密码由英文字母和数字组成的4-10位字符</div></td>
-                </tr>
-                <tr>
-                    <td class="left">确认密码：</td>
-                    <td class="center"><input type="password" id="repwd" class="in" onblur="checkRepwd()"></td>
-                    <td><div id="repwd_prompt"></div></td>
-                </tr>
-                <tr>
-                    <td class="left">电子邮箱：</td>
-                    <td class="center"><input type="text" id="email" class="in" name="uMail" onblur="checkEmail()"></td>
-                    <td><div id="email_prompt"></div></td>
-                </tr>
-                <tr>
-                    <td class="left">手机号码：</td>
-                    <td class="center"><input type="text" id="mobile" class="in" name="uPhone" onblur="checkMobile()"></td>
-                    <td><div id="mobile_prompt"></div></td>
-                </tr>
-                <tr>
-                    <td class="left"> </td>
-                    <td class="center"><input name="" type="button" value="注册" /></td>
-                    <td>
-                        <input name="uFraction" type="hidden" value="50" />
-                        <input name="uPictuer" type="hidden" value="images/img01.png" />
-                        <input name="uPower" type="hidden" value="1" />
-                        <input name="uMonery" type="hidden" value="50" />
-                    </td>
-                </tr>
-            </table>
-            </td>
-        </tr>
-    </form>
-</table>
+
+	<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="#">首页</a></li>
+    <li><a href="#">表单</a></li>
+    </ul>
+    </div>
+    
+    <div class="formbody">
+    
+    <div class="formtitle"><span>基本信息</span></div>
+    
+    <ul class="forminfo">
+    <li><label>文章标题</label><input name="" type="text" class="dfinput" /><i>标题不能超过30个字符</i></li>
+    <li><label>关键字</label><input name="" type="text" class="dfinput" /><i>多个关键字用,隔开</i></li>
+    <li><label>是否审核</label><cite><input name="" type="radio" value="" checked="checked" />是&nbsp;&nbsp;&nbsp;&nbsp;<input name="" type="radio" value="" />否</cite></li>
+    <li><label>引用地址</label><input name="" type="text" class="dfinput" value="http://www..com/html/uidesign/" /></li>
+    <li><label>文章内容</label><textarea name="" cols="" rows="" class="textinput"></textarea></li>
+    <li><label>&nbsp;</label><input name="" type="button" class="btn" value="确认保存"/></li>
+    </ul>
+    
+    
+    </div>
 </body>
 </html>
