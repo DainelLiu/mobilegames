@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script language="javascript">
+	$(function() {
+		//导航切换
+		$(".imglist li").click(function() {
+			$(".imglist li.selected").removeClass("selected")
+			$(this).addClass("selected");
+		})
+	})
+</script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".click").click(function() {
+			$(".tip").fadeIn(200);
+		});
+
+		$(".tiptop a").click(function() {
+			$(".tip").fadeOut(200);
+		});
+
+		$(".sure").click(function() {
+			$(".tip").fadeOut(100);
+		});
+
+		$(".cancel").click(function() {
+			$(".tip").fadeOut(100);
+		});
+		getGoodsInfo(1);
+	});
+	
+	function getGoodsInfo(page) {
+        $.ajax({
+            type: "get",
+            async: false,
+            url: "./goods/list.action",
+            dataType: "json",
+            data: {
+                pageNum: page
+            },
+            success: function (data) {
+                console.log(data);
+                var html = '';
+                if (data.status == 'success') {
+                    var rows = data.data;
+                    for(var i=0;i<rows.length;i++){
+                        var item = rows[i];
+                        html += '<tr>';
+                        html += '<td>'+item.gSId.sDescribe+'</td>';
+                        html += '<td>'+item.gZId.zGaId.gaDescribe+' '+item.gZId.zDescribe+'</td>';
+                        html += '<td>'+item.gName+'<p>内容:'+item.gDescribe+'</p></td>';
+                        html += '<td>'+item.gSTime+'</td>';
+                        html += '<td>'+item.gOTime+'</td>';
+                        html += '<td>'+item.gDuration+'</td>';
+                        html += '<td>'+item.gPrice+'</td>';
+                        if(item.gSign == '1'){
+                        	html += '<td>发布中</td>';
+                        	html += '<td><a href="#" class="tablelink"> 下架</a></td>';
+                        }else if(item.gSign == '2'){
+                        	html += '<td colspan="2">进行中</td>';
+                        }else{
+                        	html += '<td colspan="2">已完成</td>';
+                        }
+                        html += '</tr>';
+                    }
+                    $('#goodslist').empty().html(html);
+                    totlaPage = data.pageTotal;
+                    nowPage = data.pageNum;
+                    $('#pageNum').text(data.pageNum+'页/共'+data.pageTotal+'页');
+                    var pageHtml = '';
+                    if(nowPage == 1){
+                        pageHtml += '<li class="paginItem"><a href><span class="pagepre"></span></a></li>';
+                    }else{
+                        pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)-1)+');"><span class="pagepre"></span></a></li>';
+                    }
+                    for(var p = 1 ; p <= totlaPage ; p++){
+                        pageHtml += '<li class="paginItem"><a href="javascript:getData('+p+');">'+p+'</a></li>';
+                    }
+                    if(nowPage == 1){
+                        pageHtml += '<li class="paginItem"><a href><span class="pagenxt"></span></a></li>'
+                    }else{
+                        pageHtml += '<li class="paginItem"><a href="javascript:getData('+(parseInt(nowPage)+1)+');"><span class="pagenxt"></span></a></li>';
+                    }
+                    $('#pageBox').empty().html(pageHtml);
+                    $('#pageDiv').show();
+                } else {
+                    //没有数据或服务器错误
+                    html = '<tr><td colspan="9">暂无数据</td></tr>';
+                    $('#goodslist').empty().html(html);
+                    $('#pageDiv').hide();
+                }
+
+            }
+        });
+    }
+	
+</script>
+</head>
+
+
+<body>
+
+	<div class="place">
+		<span>位置：</span>
+		<ul class="placeul">
+			<li><a href="#">首页</a></li>
+			<li><a href="#">商品列表</a></li>
+		</ul>
+	</div>
+
+	<div class="rightinfo">
+
+		<div class="tools">
+
+			<ul class="toolbar">
+				<li class="click"><span><img src="images/t01.png" /></span>添加</li>
+			</ul>
+
+
+			<ul class="toolbar1">
+				<li><input type="text" id="searchGood" style="height:33px;"></input></li>
+				<li><span><img src="images/t05.png" /></span>搜索</li>
+			</ul>
+
+		</div>
+
+
+		<table class="imgtable">
+
+			<thead>
+				<tr>
+					<th>类别</th>
+					<th>游戏&区服</th>
+					<th>标题</th>
+					<th>开始时间</th>
+					<th>结束时间</th>
+					<th>时长</th>
+					<th>价格</th>
+					<th>状态</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+
+			<tbody id="goodslist">
+
+			</tbody>
+
+		</table>
+
+		<div class="pagin" id="pageDiv" style="display: none;">
+	        <div class="message">当前显示第&nbsp;<i class="blue" id="pageNum"></i>页/共&nbsp;<i class="blue" id="pageTotal"></i>页
+	        </div>
+	        <ul class="paginList" id="pageBox">
+	        </ul>
+	    </div>
+
+
+		<div class="tip">
+			<div class="tiptop">
+				<span>提示信息</span><a></a>
+			</div>
+
+			<div class="tipinfo">
+				<span><img src="images/ticon.png" /></span>
+				<div class="tipright">
+					<p>是否确认对信息的修改 ？</p>
+					<cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+				</div>
+			</div>
+
+			<div class="tipbtn">
+				<input name="" type="button" class="sure" value="确定" />&nbsp; <input
+					name="" type="button" class="cancel" value="取消" />
+			</div>
+
+		</div>
+
+
+
+
+	</div>
+
+	<div class="tip">
+		<div class="tiptop">
+			<span>提示信息</span><a></a>
+		</div>
+
+		<div class="tipinfo">
+			<span><img src="images/ticon.png" /></span>
+			<div class="tipright">
+				<p>是否确认对信息的修改 ？</p>
+				<cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+			</div>
+		</div>
+
+		<div class="tipbtn">
+			<input name="" type="button" class="sure" value="确定" />&nbsp; <input
+				name="" type="button" class="cancel" value="取消" />
+		</div>
+
+	</div>
+
+	<script type="text/javascript">
+		$('.imgtable tbody tr:odd').addClass('odd');
+	</script>
+</body>
+</html>

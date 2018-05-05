@@ -2,6 +2,7 @@ package com.lmt.action;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class UsersAction {
 		users.setuFraction(uFraction);
 		users.setuPhone(uPhone);
 		users.setuMail(uMail);
-		users.setuPictuer("images/img01.png");
+		users.setuPicture("images/img01.png");
 		users.setuGrade(1);
 		users.setuPower(uPower);
 		users.setuMonery(uMonery);
@@ -114,13 +115,16 @@ public class UsersAction {
 	public String update() throws IOException{
 		
 		String uId = ServletActionContext.getRequest().getParameter("uId");
+		BigDecimal uMonery = new BigDecimal(ServletActionContext.getRequest().getParameter("uMonery"));
 		
 		Users users = usersDao.getById(uId);
+		users.setuMonery(uMonery);
 		JSONObject jobj = new JSONObject();
 		
 		if(usersDao.update(users)) {
 			jobj.put("mes", "更新成功!");
 			jobj.put("status", "success");
+			jobj.put("loginUser", users);
 		}else{
 			//save failed
 			jobj.put("mes", "更新失败!");
@@ -145,6 +149,7 @@ public class UsersAction {
 			//save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
+			jobj.put("data",users);
 		}else{
 			//save failed
 			jobj.put("mes", "获取失败!");
@@ -202,6 +207,28 @@ public class UsersAction {
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
 			jobj.put("data", JsonUtil.toJsonByListObj(usersTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	@Action(value="login")
+	public String login() throws IOException{
+		String uName = URLDecoder.decode(ServletActionContext.getRequest().getParameter("uName"), "utf-8");
+		String uPassword = ServletActionContext.getRequest().getParameter("uPwd");
+		String hql = "from Users where uName='"+uName+"' and uPassword='"+uPassword+"'";
+		List<Object> usersTypelist = usersDao.getAllByConds(hql);//获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if(usersTypelist.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("loginUser", usersTypelist.get(0));
 		}else{
 			//save failed
 			jobj.put("mes", "获取失败!");

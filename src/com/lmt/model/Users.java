@@ -90,7 +90,7 @@ public class Users implements Serializable{
 	public String getuPicture() {
 		return uPicture;
 	}
-	public void setuPictuer(String uPicture) {
+	public void setuPicture(String uPicture) {
 		this.uPicture = uPicture;
 	}
 	public BigDecimal getuFraction() {
