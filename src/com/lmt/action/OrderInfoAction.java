@@ -80,9 +80,12 @@ private IGoodsDao goodsDao;
 		
 		OrderInfo orderInfo = new OrderInfo();
 		orderInfo.setoUId(usersDao.getById(oUId));
-		//orderInfo.setoGId(goodsDao.getById(oGId));
+		orderInfo.setoGId(goodsDao.getById(oGId));
 		orderInfo.setoDetermine(df.format(day));
-		orderInfo.setoComplete(oComplete);
+		if(oComplete != null && !"".equals(oComplete)) {
+			orderInfo.setoComplete(oComplete);
+		}
+		
 		orderInfo.setoSign(0);
 		
 		JSONObject jobj = new JSONObject();
