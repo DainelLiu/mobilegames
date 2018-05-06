@@ -20,6 +20,7 @@ import com.lmt.dao.IOrderInfoDao;
 import com.lmt.dao.IUsersDao;
 import com.lmt.model.Goods;
 import com.lmt.model.OrderInfo;
+import com.lmt.model.Users;
 import com.lmt.util.JsonUtil;
 import com.lmt.util.PageBean;
 
@@ -139,6 +140,10 @@ private IGoodsDao goodsDao;
 	@Action(value="update")
 	public String update() throws IOException{
 		Date day = new Date();
+		BigDecimal sumNum = new BigDecimal(""); 
+		BigDecimal addNum = new BigDecimal("5.00"); 
+		BigDecimal newNum = new BigDecimal("0.00");
+		BigDecimal Num = new BigDecimal("50.00");
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String oId = ServletActionContext.getRequest().getParameter("oId");
 		int oSign = Integer.parseInt(ServletActionContext.getRequest().getParameter("oSign"));
@@ -147,7 +152,19 @@ private IGoodsDao goodsDao;
 		JSONObject jobj = new JSONObject();
 		if(oSign == 3) {
 			orderInfo.setoSign(oSign);
-			orderInfo.setoDetermine(df.format(day));
+			orderInfo.setoComplete(df.format(day));
+			Users users = usersDao.getById(orderInfo.getoUId().getuId());
+			BigDecimal fraction = users.getuFraction();
+			int grade = users.getuGrade();
+			sumNum = fraction.add(addNum);
+			if(sumNum.compareTo(Num) == 0) {
+				users.setuGrade(grade+1);
+				users.setuFraction(newNum);
+			}else {
+				users.setuFraction(sumNum);
+			}
+			
+			usersDao.update(users);
 		}
 		if(orderInfoDao.update(orderInfo)) {
 			Goods temp = orderInfo.getoGId();
