@@ -157,7 +157,7 @@ private IGoodsDao goodsDao;
 			BigDecimal fraction = users.getuFraction();
 			int grade = users.getuGrade();
 			sumNum = fraction.add(addNum);
-			if(sumNum.compareTo(Num) == 0) {
+			if(sumNum.compareTo(Num) == 1) {
 				users.setuGrade(grade+1);
 				users.setuFraction(newNum);
 			}else {

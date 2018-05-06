@@ -313,7 +313,7 @@ private IZoneDao zoneDao;
 		PageBean page=null;
 		if(goodsTypelist.size()>0){
 			page = new PageBean(goodsTypelist.size(),pageNum,10);
-			list = goodsDao.getByConds("from Goods where gSign !='5'", page);//带分页
+			list = goodsDao.getByConds("from Goods where gSign !='4' and gSign !='5'", page);//带分页
 		}
 		JSONObject jobj = new JSONObject();
 		if(list.size() > 0){
