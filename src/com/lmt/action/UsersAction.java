@@ -295,5 +295,39 @@ public class UsersAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+	
+	@Action(value="listByBack")
+	public String listByBack() throws IOException{
+		//分页
+		String pageNumStr = ServletActionContext.getRequest().getParameter("pageNum");
+		String hql ="from Users where 1=1 and uPower !='0'";
+		int pageNum = 1;
+		if(pageNumStr!=null && !"".equals(pageNumStr)){
+			pageNum = Integer.parseInt(pageNumStr);
+		}
+		List<Object> list = new ArrayList<Object>();
+		List<Object> usersTypelist = usersDao.getAllByConds(hql);//获取所有类型数据，不带分页
+		PageBean page=null;
+		if(usersTypelist.size()>0){
+			page = new PageBean(usersTypelist.size(),pageNum,5);
+			list = usersDao.listAll(page);//带分页
+		}
+		JSONObject jobj = new JSONObject();
+		if(usersTypelist.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(list));
+			jobj.put("pageTotal", page.getPageCount());
+			jobj.put("pageNum", page.getPageNum());
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
 
 }
