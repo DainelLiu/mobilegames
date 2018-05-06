@@ -17,7 +17,7 @@ $(function(){
 	$('#username').text(loginUser.uName);
 });
 function loginout(){
-	Util.clearLocalStorage();
+	Util.removeLocalStorage('loginUser');
 	window.parent.location.href = 'login.html';
 }
 </script>

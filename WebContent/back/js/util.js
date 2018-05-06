@@ -88,6 +88,9 @@ var Util = {
     },
     clearLocalStorage: function(){
     	localStorage.clear();
+    },
+    removeLocalStorage: function(key){
+    	localStorage.removeItem(key);
     }
     
 }
