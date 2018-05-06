@@ -53,12 +53,13 @@
                         for (var i = 0; i < rows.length; i++) {
                             var item = rows[i];
                             html += '<tr>';
-                            html += '<td class="imgtd"><img src="images/img11.png"/></td>';
                             html += '<td>' + item.uId + '</td>';
                             html += '<td>' + item.uName + '</td>';
                             html += '<td class="password-field">' + item.uPassword + '</td>';
                             html += '<td>' + item.uPhone + '</td>';
                             html += '<td>' + item.uMail + '</td>';
+                            html += '<td>' + item.uFraction + '</td>';
+                            html += '<td>' + item.uGrade + '</td>';
                             html += '<td>' + item.uMonery + '</td>';
                             if (item.uSign == '0') {
                                 html += '<td>锁定</td>';
@@ -139,12 +140,13 @@
 
         <thead>
         <tr>
-            <th width="100px;">头像</th>
             <th>编号</th>
             <th>用户名</th>
             <th>密码</th>
             <th>手机</th>
             <th>邮箱</th>
+            <th>信用度</th>
+            <th>等级</th>
             <th>账户余额/元</th>
             <th>状态</th>
             <th>操作</th>
