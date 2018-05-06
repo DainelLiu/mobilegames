@@ -29,7 +29,7 @@
                 success: function (data) {
                     console.log(data);
                     if (data.status == 'success') {
-                    	Util.setLocalStorage("loginUser",JSON.stringify(data.adminLoginUser));
+                    	Util.setLocalStorage("adminloginUser",JSON.stringify(data.loginUser));
                     	window.location.href = 'main.html';
                     } else {
                         //没有数据或服务器错误
@@ -68,10 +68,10 @@
 
         <ul>
             <li><input name="" type="text" id="uName" class="loginuser" placeholder="用户名" value="" onclick="JavaScript:this.value=''"/></li>
-            <li><input name="" type="text" id="uPwd" class="loginpwd" placeholder="密码" value="" onclick="JavaScript:this.value=''"/></li>
+            <li><input name="" type="password" id="uPwd" class="loginpwd" placeholder="密码" value="" onclick="JavaScript:this.value=''"/></li>
             <li>
                 <input name="" type="button" class="loginbtn" value="登录" onclick="login()"/>
-                <input name="" type="button" class="loginbtn" value="注册" onclick="javascript:window.location='register.html'"/>
+                <!-- <input name="" type="button" class="loginbtn" value="注册" onclick="javascript:window.location='register.html'"/> -->
             </li>
             <li>
                 <label><input name="" type="checkbox" value=""  checked="checked"/>记住密码</label>

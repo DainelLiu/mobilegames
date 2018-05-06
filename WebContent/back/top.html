@@ -7,7 +7,7 @@
 <script language="JavaScript" src="js/jquery.js"></script>
 <script language="JavaScript" src="js/util.js"></script>
 <script type="text/javascript">
-var loginUser = JSON.parse(Util.getLocalStorage("loginUser"));
+var loginUser = JSON.parse(Util.getLocalStorage("adminloginUser"));
 $(function(){	
 	//顶部导航切换
 	$(".nav li a").click(function(){
@@ -17,7 +17,7 @@ $(function(){
 	$('#username').text(loginUser.uName);
 });
 function loginout(){
-	Util.clearLocalStorage();
+	Util.removeLocalStorage('adminloginUser');
 	window.parent.location.href = 'login.html';
 }
 </script>
